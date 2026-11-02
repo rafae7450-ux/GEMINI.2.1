@@ -1,13 +1,36 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>GEMINI 2.1</title>
-<style>body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:15px}.box{max-width:600px;margin:auto;background:#111;padding:20px;border-radius:15px}input{width:65%;padding:12px;border-radius:10px;border:none}button{padding:12px 18px;border-radius:10px;border:none;background:#00f2fe;color:#000;font-weight:bold;cursor:pointer}#chat{max-height:400px;overflow-y:auto;text-align:left;margin:15px 0}.user{background:#00f2fe;color:#000;padding:10px;border-radius:12px;margin:8px 0 8px 40px;text-align:right}.ai{background:#222;padding:10px;border-radius:12px;margin:8px 40px 8px 0;white-space:pre-wrap}.keybox{background:#1a1a2e;padding:12px;border-radius:10px;margin-bottom:15px;border:1px solid #00f2fe}</style>
-</head><body><h1 style="color:#00f2fe">GEMINI 2.1</h1><p>Real AI by Abul Rafae</p><div class="box">
-<div id="keyArea" class="keybox">🔑 API Key dalo (1 bar):<br><br><input id="apiKeyInput" placeholder="AIza..."><button onclick="saveKey()">Save</button><br><a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#00f2fe;font-size:12px">Get Key Here</a></div>
+<style>body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:15px}.box{max-width:650px;margin:auto;background:#111;padding:20px;border-radius:15px}input{width:65%;padding:12px;border-radius:10px;border:none}button{padding:12px 18px;border-radius:10px;border:none;background:#00f2fe;color:#000;font-weight:bold;cursor:pointer}#chat{max-height:380px;overflow-y:auto;text-align:left;margin:15px 0}.user{background:#00f2fe;color:#000;padding:10px;border-radius:12px;margin:8px 0 8px 40px;text-align:right}.ai{background:#222;padding:10px;border-radius:12px;margin:8px 40px 8px 0;white-space:pre-wrap;word-break:break-word}.keybox{background:#1a1a2e;padding:12px;border-radius:10px;margin-bottom:15px;border:1px solid #00f2fe;font-size:12px}</style>
+</head><body><h1 style="color:#00f2fe">GEMINI 2.1</h1><p>Real AI by Abul Rafae - Auto Model</p><div class="box">
+<div id="keyArea" class="keybox">🔑 API Key dalo (1 bar):<br><br><input id="apiKeyInput" placeholder="AIza..."><button onclick="saveKey()">Save</button><br><a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#00f2fe">Get Key Here</a><div id="modelList" style="margin-top:10px;color:#0f0"></div></div>
 <div id="chat"></div><div style="display:flex;gap:8px"><input id="msg" placeholder="Ask anything..." onkeypress="if(event.key==='Enter')send()"><button onclick="send()">Send</button></div></div>
 <script>
-let apiKey=localStorage.getItem('gemini_key')||'';if(apiKey)document.getElementById('keyArea').innerHTML='✅ Key Saved! <button onclick="changeKey()">Change</button>';
-function saveKey(){let k=document.getElementById('apiKeyInput').value.trim();if(k.length<20){alert('Puri key copy karo');return;}localStorage.setItem('gemini_key',k);apiKey=k;document.getElementById('keyArea').innerHTML='✅ Key Saved! <button onclick="changeKey()">Change</button>';alert('Done!');}
+let apiKey=localStorage.getItem('gemini_key')||'';let workingModel=''; 
+if(apiKey){document.getElementById('keyArea').innerHTML=`✅ Key Saved! <button onclick="changeKey()">Change</button><div id="modelList" style="margin-top:10px;color:#0f0">Checking models...</div>`;findModel();}
+async function saveKey(){let k=document.getElementById('apiKeyInput').value.trim();if(k.length<20){alert('Puri key copy karo');return;}localStorage.setItem('gemini_key',k);apiKey=k;location.reload();}
 function changeKey(){localStorage.removeItem('gemini_key');location.reload();}
-async function send(){let t=document.getElementById('msg').value.trim();if(!t)return;if(!apiKey){alert('Pehle key dalo');return;}let c=document.getElementById('chat');c.innerHTML+=`<div class="user">${t}</div>`;document.getElementById('msg').value='';c.scrollTop=c.scrollHeight;
-try{let r=await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-flash-latest:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:t}]}]})});let d=await r.json();if(d.error){c.innerHTML+=`<div class="ai">❌ ${d.error.message}</div>`;}else{c.innerHTML+=`<div class="ai">${d.candidates[0].content.parts[0].text}</div>`;}}catch(e){c.innerHTML+=`<div class="ai">❌ ${e.message}</div>`;}c.scrollTop=c.scrollHeight;}
+async function findModel(){
+ try{
+  let r=await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`);
+  let d=await r.json();
+  if(d.error){document.getElementById('modelList').innerHTML=`❌ ${d.error.message}<br>API Enable karo: <a href="https://console.cloud.google.com/apis/library/generativelanguage.googleapis.com" target="_blank" style="color:#0ff">Enable Link</a>`;return;}
+  let models=d.models.filter(m=>m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'));
+  // flash wala model dhoondo
+  let flash=models.find(m=>m.name.includes('flash')) || models[0];
+  workingModel=flash.name; // jaise models/gemini-2.0-flash
+  document.getElementById('modelList').innerHTML=`✅ Working Model: ${workingModel} <br> ${models.length} models available`;
+ }catch(e){document.getElementById('modelList').innerHTML=`❌ ${e.message}`;}
+}
+async function send(){
+ let t=document.getElementById('msg').value.trim();if(!t)return;if(!apiKey){alert('Pehle key dalo');return;}
+ if(!workingModel){alert('Model check ho raha hai, 2 sec ruko');await findModel();}
+ let c=document.getElementById('chat');c.innerHTML+=`<div class="user">${t}</div>`;document.getElementById('msg').value='';c.scrollTop=c.scrollHeight;
+ try{
+  let r=await fetch(`https://generativelanguage.googleapis.com/v1/${workingModel}:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:t}]}]})});
+  let d=await r.json();
+  if(d.error){c.innerHTML+=`<div class="ai">❌ ${d.error.message}<br><br>Solution: <a href="https://console.cloud.google.com/apis/library/generativelanguage.googleapis.com" target="_blank" style="color:#0ff">Yahan click karke ENABLE dabao</a></div>`;}
+  else{c.innerHTML+=`<div class="ai">${d.candidates[0].content.parts[0].text}</div>`;}
+ }catch(e){c.innerHTML+=`<div class="ai">❌ ${e.message}</div>`;}
+ c.scrollTop=c.scrollHeight;
+}
 </script></body></html>
