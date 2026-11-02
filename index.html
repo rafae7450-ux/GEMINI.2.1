@@ -9,9 +9,9 @@ body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:20px
 .box{max-width:600px;margin:20px auto;background:#111;padding:20px;border-radius:15px}
 input{width:70%;padding:12px;border-radius:10px;border:none}
 button{padding:12px 20px;border-radius:10px;border:none;background:linear-gradient(45deg,#00f2fe,#4facfe);color:#fff;font-weight:bold;cursor:pointer;margin:5px}
-#chat{max-height:400px;overflow-y:auto;text-align:left;margin:20px 0}
-.user{background:linear-gradient(90deg,#00f2fe,#4facfe);padding:10px 15px;border-radius:15px;margin:10px 0;margin-left:50px;text-align:right}
-.ai{background:#222;padding:10px 15px;border-radius:15px;margin:10px 0;margin-right:50px}
+#chat{max-height:450px;overflow-y:auto;text-align:left;margin:20px 0}
+.user{background:linear-gradient(90deg,#00f2fe,#4facfe);padding:10px 15px;border-radius:15px;margin:10px 0;margin-left:50px;text-align:right;word-wrap:break-word}
+.ai{background:#222;padding:12px 15px;border-radius:15px;margin:10px 0;margin-right:20px;white-space:pre-wrap;word-wrap:break-word}
 .keybox{background:#1a1a2e;padding:15px;border-radius:10px;margin-bottom:20px;border:1px solid #4facfe}
 </style>
 </head>
@@ -21,10 +21,10 @@ button{padding:12px 20px;border-radius:10px;border:none;background:linear-gradie
 
 <div class="box">
 <div id="keyArea" class="keybox">
-🔑 Apni Gemini API Key dalo (1 bar hi dalni hai):<br><br>
+🔑 Apni Gemini API Key dalo (1 bar hi):<br><br>
 <input type="text" id="apiKeyInput" placeholder="AIza... wali puri key">
 <button onclick="saveKey()">Save Key</button>
-<p style="font-size:12px;margin-top:10px">Key kaise milegi? <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#00f2fe">aistudio.google.com/app/apikey</a></p>
+<p style="font-size:12px;margin-top:10px">Key: <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#00f2fe">aistudio.google.com/app/apikey</a></p>
 </div>
 
 <div id="chat"></div>
@@ -41,11 +41,11 @@ if(apiKey){document.getElementById('keyArea').innerHTML = '✅ Key Saved! <butto
 
 function saveKey(){
 let k = document.getElementById('apiKeyInput').value.trim();
-if(k.length < 20){alert('Puri key dalo! Copy icon se copy karo');return;}
+if(k.length < 20){alert('Puri key dalo! Copy icon 📋 se copy karo');return;}
 localStorage.setItem('gemini_key',k);
 apiKey=k;
 document.getElementById('keyArea').innerHTML = '✅ Key Saved! <button onclick="changeKey()">Change Key</button>';
-alert('Key save ho gayi!');
+alert('Key save ho gayi! Ab chat karo!');
 }
 function changeKey(){
 localStorage.removeItem('gemini_key');
@@ -61,22 +61,33 @@ chatDiv.innerHTML += `<div class="user">${text}</div>`;
 document.getElementById('msg').value='';
 chatDiv.scrollTop = chatDiv.scrollHeight;
 
+let models = ["gemini-2.5-flash","gemini-2.5-flash-lite","gemini-flash-latest","gemini-2.0-flash"];
+
+for(let model of models){
 try{
-let res = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{
+let res = await fetch(`https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`,{
 method:'POST',
 headers:{'Content-Type':'application/json'},
 body:JSON.stringify({contents:[{parts:[{text:text}]}]})
 });
 let data = await res.json();
-console.log(data);
-if(data.error){chatDiv.innerHTML += `<div class="ai">❌ Error: ${data.error.message}</div>`;}
-else{
+if(data.error){
+console.log(model + " failed: " + data.error.message);
+if(model === models[models.length-1]){
+chatDiv.innerHTML += `<div class="ai">❌ Error: ${data.error.message}</div>`;
+}
+continue;
+}
 let reply = data.candidates[0].content.parts[0].text;
 chatDiv.innerHTML += `<div class="ai">${reply}</div>`;
-}
+chatDiv.scrollTop = chatDiv.scrollHeight;
+return;
 }catch(e){
-chatDiv.innerHTML += `<div class="ai">❌ Error: ${e.message}</div>`;
+console.log(e);
+continue;
 }
+}
+chatDiv.innerHTML += `<div class="ai">❌ Sab models busy hain, 1 min baad try karo</div>`;
 chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 </script>
