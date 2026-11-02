@@ -3,57 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GEMINI 2.1 - By Abul Rafae</title>
+<title>GEMINI 2.1 - Super Brain by Abul Rafae</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui;background:#0f0f0f;color:white;display:flex;flex-direction:column;height:100vh;height:100dvh}
-.header{background:#1a1a1a;padding:15px;text-align:center;border-bottom:2px solid #4f46e5;flex-shrink:0}
-.chat{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:12px;padding-bottom:20px}
-.msg{padding:12px 16px;border-radius:18px;max-width:88%;line-height:1.4;white-space:pre-wrap}
-.user{background:#4f46e5;align-self:flex-end}
-.bot{background:#252525;align-self:flex-start;border:1px solid #333}
-.input-bar{flex-shrink:0;background:#1a1a1a;padding:12px;display:flex;gap:8px;border-top:1px solid #333}
-.input-bar input{flex:1;padding:14px 18px;border-radius:25px;border:none;background:#2a2a2a;color:white;outline:none;font-size:16px}
-.input-bar button{padding:12px 22px;border-radius:25px;border:none;background:#4f46e5;color:white;font-weight:bold}
+body{font-family:system-ui;background:#0a0a0a;color:#eee;display:flex;flex-direction:column;height:100vh;height:100dvh}
+.header{background:#111;padding:14px;text-align:center;border-bottom:2px solid #7c3aed;position:sticky;top:0;z-index:10}
+.header h3{color:#a78bfa}
+.header span{font-size:12px;opacity:.6}
+.chat{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.msg{padding:13px 16px;border-radius:18px;max-width:92%;line-height:1.5;white-space:pre-wrap;word-break:break-word;font-size:15px}
+.user{background:linear-gradient(135deg,#7c3aed,#4f46e5);align-self:flex-end;color:white}
+.bot{background:#1e1e1e;align-self:flex-start;border:1px solid #2a2a2a}
+.bot.loading{opacity:.6;font-style:italic}
+.bar{background:#111;padding:10px;display:flex;gap:8px;border-top:1px solid #222;flex-shrink:0}
+.bar input{flex:1;padding:13px 18px;border-radius:25px;border:1px solid #333;background:#1e1e1e;color:white;outline:none;font-size:16px}
+.bar input:focus{border-color:#7c3aed}
+.bar button{padding:12px 20px;border-radius:25px;border:none;background:#7c3aed;color:white;font-weight:bold;cursor:pointer}
+.chips{display:flex;gap:6px;padding:8px 14px;background:#111;overflow-x:auto;flex-shrink:0}
+.chip{white-space:nowrap;padding:6px 12px;border-radius:20px;background:#1e1e1e;border:1px solid #333;font-size:12px;cursor:pointer}
 </style>
 </head>
 <body>
 <div class="header">
 <h3>🤖 GEMINI 2.1</h3>
-<div style="font-size:13px;opacity:.7">By Abul Rafae - Undeletable Edition 2026</div>
+<span>By Abul Rafae - Answers ALL Subjects: Math • Science • SST • Geography • English • Code</span>
+</div>
+<div class="chips">
+<div class="chip" onclick="quick('Solve: (5+3)*12 / 2')">Math</div>
+<div class="chip" onclick="quick('Explain photosynthesis in simple words')">Science</div>
+<div class="chip" onclick="quick('Capital of Oman and its geography?')">Geography</div>
+<div class="chip" onclick="quick('Write essay on My Aim in Life')">English</div>
+<div class="chip" onclick="quick('What is History of Mughal Empire?')">SST</div>
+<div class="chip" onclick="quick('Write Python code for calculator')">Code</div>
 </div>
 <div class="chat" id="chat">
-<div class="msg bot">Salam! I am GEMINI 2.1 by Abul Rafae. I can solve ALL subjects! Try: 2+2, what is 10*10, python code, science, etc. Scroll works now!</div>
+<div class="msg bot">Salam Abul Rafae! 👋 I am your SUPER GEMINI 2.1
+
+I can now answer:
+✅ ALL Math - algebra, calculus, 2+2 to complex equations
+✅ Science - Physics, Chemistry, Biology
+✅ SST, History, Geography
+✅ English - essays, grammar, letters
+✅ Coding - Python, JS, HTML
+
+Try me! Ask: "What is photosynthesis?" or "Solve x^2 + 5x + 6 = 0" or "Capital of Japan?"
+
+I am online and ready! 🚀</div>
 </div>
-<div class="input-bar">
-<input id="inp" placeholder="Ask anything... e.g. 2+2" onkeydown="if(event.key==='Enter')send()">
+<div class="bar">
+<input id="inp" placeholder="Ask anything... Math, Science, English..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">Send</button>
 </div>
 <script>
 const chat=document.getElementById('chat');
 const inp=document.getElementById('inp');
-function add(t,c){const d=document.createElement('div');d.className='msg '+c;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
-function solve(q){
- let low=q.toLowerCase().trim();
+function add(t,c){const d=document.createElement('div');d.className='msg '+c;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d;}
+function quick(q){inp.value=q;send();}
+async function askAI(prompt){
+ // Free AI API - Pollinations - No key needed, answers everything
  try{
-  let m=q.match(/([0-9+\-*/().\s^%]+)/);
-  if(m){
-   let expr=m[0].replace(/\^/g,'**').trim();
-   if(/^[0-9+\-*/().\s%*]+$/.test(expr) && expr.replace(/\s/g,'').length>1){
-    let ans=Function('"use strict";return ('+expr+')')();
-    if(typeof ans==='number' && isFinite(ans)) return expr+' = '+ans+' ✅';
-   }
-  }
- }catch(e){}
- if(low==='2+2'||low==='2 + 2'||low.includes('2+2')) return '2 + 2 = 4 ✅';
- if(low.includes('who are you')||low.includes('who made')) return 'I am GEMINI 2.1 created by Abul Rafae! I help with Math, Science, Coding, English, Everything!';
- if(low.includes('hi')||low.includes('hello')||low.includes('salam')) return 'Hello! 👋 I am GEMINI 2.1. Ask me anything - Math (2+2), Science, Coding, Homework!';
- return 'You: "'+q+'"\n\nI am GEMINI 2.1 by Abul Rafae. I can answer that! If math, just type numbers like 5*8 or (10+2)/3. If homework, say subject. Try now: what is 2+2?';
+  const system = "You are GEMINI 2.1 created by Abul Rafae, a helpful tutor for all subjects. Answer short, clear, in simple English/Hinglish mix for students. If math, show steps. You know Math, Science, SST, Geography, English, Coding. Owner: Abul Rafae.";
+  const url = `https://text.pollinations.ai/${encodeURIComponent(system + "\n\nUser question: " + prompt + "\nAnswer:")}?model=openai`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error("api");
+  let txt = await res.text();
+  return txt.trim().slice(0,4000);
+ }catch(e){
+  // Fallback local solver
+  return localSolver(prompt);
+ }
 }
-function send(){
- let t=inp.value.trim();if(!t)return;
- add(t,'user');inp.value='';
- setTimeout(()=>{add(solve(t),'bot')},400);
+function localSolver(q){
+ let s=q.toLowerCase();
+ try{
+  let expr=q.match(/^[0-9+\-*/().\s^%!]+$/);
+  if(expr){ let ans=Function('"use strict";return ('+q.replace(/\^/g,'**')+')')(); if(isFinite(ans)) return q+" = "+ans; }
+ }catch{}
+ if(s.includes("2+2")) return "2+2 = 4";
+ if(s.includes("photosynthesis")) return "Photosynthesis is process where plants make food using sunlight, CO2 and water. 6CO2 + 6H2O + Sunlight -> C6H12O6 + 6O2. Occurs in chloroplasts.";
+ if(s.includes("capital")) return "Tell me which country? Eg: Oman = Muscat, Pakistan = Islamabad, India = New Delhi.";
+ return "I am GEMINI 2.1 by Abul Rafae. I tried to connect to Super Brain but internet slow. Ask again: '"+q+"'. Tip: For math type like 12*8, for science ask clearly.";
+}
+async function send(){
+ let t=inp.value.trim(); if(!t) return;
+ add(t,'user'); inp.value='';
+ let load=add("Thinking... 🤔",'bot loading');
+ try{
+  let ans=await askAI(t);
+  load.remove();
+  add(ans,'bot');
+ }catch{
+  load.remove();
+  add("Network slow! Trying offline mode...\n"+localSolver(t),'bot');
+ }
 }
 </script>
 </body>
