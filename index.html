@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEMINI 2.1 - By Abul Rafae</title>
+<style>
+body{margin:0;font-family:Arial;background:#0f0f0f;color:white}
+.header{background:#1a1a1a;text-align:center;padding:20px}
+.chat{height:380px;overflow:auto;padding:15px;background:#1e1e1e;margin:10px;border-radius:10px}
+.msg{padding:10px;margin:8px 0;border-radius:12px;max-width:80%}
+.bot{background:#333}
+.user{background:#4a4aff;margin-left:auto}
+.input-box{display:flex;gap:8px;padding:10px;position:fixed;bottom:0;left:0;right:0;background:#0f0f0f}
+input{flex:1;padding:14px;border-radius:25px;border:none;outline:none}
+button{padding:14px 22px;border-radius:25px;border:none;background:#4a4aff;color:white;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="header">
+<h2>🤖 GEMINI 2.1</h2>
+<p>By Abul Rafae - Undeletable Edition 2026</p>
+</div>
+
+<div class="chat" id="chat">
+<div class="msg bot">Hello! I am GEMINI 2.1 by Abul Rafae. I can't be deleted! How can I help with homework?</div>
+</div>
+
+<div class="input-box">
+<input id="input" placeholder="Ask GEMINI 2.1 anything...">
+<button onclick="sendMsg()">Send</button>
+<button onclick="startVoice()">🎤</button>
+</div>
+
+<script>
+let chat = document.getElementById('chat');
+function sendMsg(){
+ let inp = document.getElementById('input');
+ let text = inp.value;
+ if(!text) return;
+ chat.innerHTML += `<div class="msg user">${text}</div>`;
+ inp.value = '';
+ setTimeout(()=>{
+   let reply = getReply(text);
+   chat.innerHTML += `<div class="msg bot">${reply}</div>`;
+   chat.scrollTop = chat.scrollHeight;
+ },600);
+ chat.scrollTop = chat.scrollHeight;
+}
+function getReply(t){
+ t=t.toLowerCase();
+ if(t.includes("who made you")) return "I was built by Abul Rafae - GEMINI 2.1 Undeletable Edition 2026!";
+ if(t.includes("math") || t.includes("solve")) return "Send me your math question with numbers, I will solve step by step! Example: 5x+3=8";
+ if(t.includes("homework")) return "Yes! I can do homework, science, English, history. Just paste your question!";
+ if(t.includes("hello") || t.includes("hi")) return "Hi! I am GEMINI 2.1. Ready to help you! Ask anything.";
+ return "I am GEMINI 2.1 by Abul Rafae. I understood: '"+t+"'. I can help with homework, coding, and talk! What subject you want?";
+}
+function startVoice(){
+ const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+ rec.onresult = e => { document.getElementById('input').value = e.results[0][0].transcript; sendMsg(); };
+ rec.start();
+}
+</script>
+</body>
+</html>
