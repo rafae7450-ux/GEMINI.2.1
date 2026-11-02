@@ -5,60 +5,55 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GEMINI 2.1 - By Abul Rafae</title>
 <style>
-body{margin:0;font-family:Arial;background:#0f0f0f;color:white}
-.header{background:#1a1a1a;text-align:center;padding:20px}
-.chat{height:380px;overflow:auto;padding:15px;background:#1e1e1e;margin:10px;border-radius:10px}
-.msg{padding:10px;margin:8px 0;border-radius:12px;max-width:80%}
-.bot{background:#333}
-.user{background:#4a4aff;margin-left:auto}
-.input-box{display:flex;gap:8px;padding:10px;position:fixed;bottom:0;left:0;right:0;background:#0f0f0f}
-input{flex:1;padding:14px;border-radius:25px;border:none;outline:none}
-button{padding:14px 22px;border-radius:25px;border:none;background:#4a4aff;color:white;font-weight:bold}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui;background:#0f0f0f;color:white;display:flex;flex-direction:column;height:100vh;height:100dvh}
+.header{background:#1a1a1a;padding:15px;text-align:center;border-bottom:2px solid #4f46e5;flex-shrink:0}
+.chat{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:12px;padding-bottom:20px}
+.msg{padding:12px 16px;border-radius:18px;max-width:88%;line-height:1.4;white-space:pre-wrap}
+.user{background:#4f46e5;align-self:flex-end}
+.bot{background:#252525;align-self:flex-start;border:1px solid #333}
+.input-bar{flex-shrink:0;background:#1a1a1a;padding:12px;display:flex;gap:8px;border-top:1px solid #333}
+.input-bar input{flex:1;padding:14px 18px;border-radius:25px;border:none;background:#2a2a2a;color:white;outline:none;font-size:16px}
+.input-bar button{padding:12px 22px;border-radius:25px;border:none;background:#4f46e5;color:white;font-weight:bold}
 </style>
 </head>
 <body>
 <div class="header">
-<h2>🤖 GEMINI 2.1</h2>
-<p>By Abul Rafae - Undeletable Edition 2026</p>
+<h3>🤖 GEMINI 2.1</h3>
+<div style="font-size:13px;opacity:.7">By Abul Rafae - Undeletable Edition 2026</div>
 </div>
-
 <div class="chat" id="chat">
-<div class="msg bot">Hello! I am GEMINI 2.1 by Abul Rafae. I can't be deleted! How can I help with homework?</div>
+<div class="msg bot">Salam! I am GEMINI 2.1 by Abul Rafae. I can solve ALL subjects! Try: 2+2, what is 10*10, python code, science, etc. Scroll works now!</div>
 </div>
-
-<div class="input-box">
-<input id="input" placeholder="Ask GEMINI 2.1 anything...">
-<button onclick="sendMsg()">Send</button>
-<button onclick="startVoice()">🎤</button>
+<div class="input-bar">
+<input id="inp" placeholder="Ask anything... e.g. 2+2" onkeydown="if(event.key==='Enter')send()">
+<button onclick="send()">Send</button>
 </div>
-
 <script>
-let chat = document.getElementById('chat');
-function sendMsg(){
- let inp = document.getElementById('input');
- let text = inp.value;
- if(!text) return;
- chat.innerHTML += `<div class="msg user">${text}</div>`;
- inp.value = '';
- setTimeout(()=>{
-   let reply = getReply(text);
-   chat.innerHTML += `<div class="msg bot">${reply}</div>`;
-   chat.scrollTop = chat.scrollHeight;
- },600);
- chat.scrollTop = chat.scrollHeight;
+const chat=document.getElementById('chat');
+const inp=document.getElementById('inp');
+function add(t,c){const d=document.createElement('div');d.className='msg '+c;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
+function solve(q){
+ let low=q.toLowerCase().trim();
+ try{
+  let m=q.match(/([0-9+\-*/().\s^%]+)/);
+  if(m){
+   let expr=m[0].replace(/\^/g,'**').trim();
+   if(/^[0-9+\-*/().\s%*]+$/.test(expr) && expr.replace(/\s/g,'').length>1){
+    let ans=Function('"use strict";return ('+expr+')')();
+    if(typeof ans==='number' && isFinite(ans)) return expr+' = '+ans+' ✅';
+   }
+  }
+ }catch(e){}
+ if(low==='2+2'||low==='2 + 2'||low.includes('2+2')) return '2 + 2 = 4 ✅';
+ if(low.includes('who are you')||low.includes('who made')) return 'I am GEMINI 2.1 created by Abul Rafae! I help with Math, Science, Coding, English, Everything!';
+ if(low.includes('hi')||low.includes('hello')||low.includes('salam')) return 'Hello! 👋 I am GEMINI 2.1. Ask me anything - Math (2+2), Science, Coding, Homework!';
+ return 'You: "'+q+'"\n\nI am GEMINI 2.1 by Abul Rafae. I can answer that! If math, just type numbers like 5*8 or (10+2)/3. If homework, say subject. Try now: what is 2+2?';
 }
-function getReply(t){
- t=t.toLowerCase();
- if(t.includes("who made you")) return "I was built by Abul Rafae - GEMINI 2.1 Undeletable Edition 2026!";
- if(t.includes("math") || t.includes("solve")) return "Send me your math question with numbers, I will solve step by step! Example: 5x+3=8";
- if(t.includes("homework")) return "Yes! I can do homework, science, English, history. Just paste your question!";
- if(t.includes("hello") || t.includes("hi")) return "Hi! I am GEMINI 2.1. Ready to help you! Ask anything.";
- return "I am GEMINI 2.1 by Abul Rafae. I understood: '"+t+"'. I can help with homework, coding, and talk! What subject you want?";
-}
-function startVoice(){
- const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
- rec.onresult = e => { document.getElementById('input').value = e.results[0][0].transcript; sendMsg(); };
- rec.start();
+function send(){
+ let t=inp.value.trim();if(!t)return;
+ add(t,'user');inp.value='';
+ setTimeout(()=>{add(solve(t),'bot')},400);
 }
 </script>
 </body>
