@@ -1,2 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEMINI 2.1 - Real AI</title>
+<style>
+body{margin:0;font-family:Arial;background:#0a0a0a;color:white;min-height:100vh}
+.header{text-align:center;padding:20px}
+.logo{width:120px;border-radius:20px;box-shadow:0 0 20px #00ffff}
+h1{font-size:35px;background:linear-gradient(90deg,#00ffff,#ff00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#chat{max-width:700px;margin:0 auto;padding:20px}
+#msgs{height:60vh;overflow-y:auto;background:#111;border-radius:15px;padding:15px}
+.msg{margin:10px 0;padding:12px 16px;border-radius:15px;max-width:80%;word-wrap:break-word}
+.user{background:linear-gradient(90deg,#00ffff,#0080ff);margin-left:auto;text-align:right}
+.ai{background:#222;border:1px solid #333}
+.inputBox{display:flex;gap:10px;margin-top:15px}
+input{flex:1;padding:15px;border-radius:25px;border:none;background:#222;color:white;font-size:16px}
+button{padding:15px 25px;border-radius:25px;border:none;background:linear-gradient(90deg,#00ffff,#ff00ff);color:white;font-weight:bold;cursor:pointer}
+.keyBox{background:#ff00ff33;padding:20px;border-radius:15px;margin-bottom:15px;text-align:center;border:1px solid #ff00ff}
+.keyBox input{width:65%;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="header">
+<img src="logo.jpg" class="logo">
+<h1>GEMINI 2.1</h1>
+<p>Real AI by Abul Rafae</p>
+</div>
+<div id="chat">
 <div class="keyBox" id="keyBox">
-<p>🔑 Apni Gemini API Key dalo
+<p>🔑 Apni Gemini API Key dalo (1 bar hi dalni hai):</p>
+<input id="apiKey" placeholder="AIza... yahan paste karo">
+<button onclick="saveKey()">Save Key</button><br>
+<small style="color:#aaa">Free key: aistudio.google.com/app/apikey</small>
+</div>
+<div id="msgs"><div class="msg ai">🚀 Hello! I'm REAL GEMINI 2.1 by Abul Rafae! API Key save karne ke baad mujhse kuch bhi pucho!</div></div>
+<div class="inputBox">
+<input id="input" placeholder="Ask anything..." onkeypress="if(event.key==='Enter')send()">
+<button onclick="send()">Send 🚀</button>
+</div>
+</div>
+<script>
+let API_KEY = localStorage.getItem('gemini_key');
+if(API_KEY){document.getElementById('keyBox').style.display='none';}
+function saveKey(){
+let k=document.getElementById('apiKey').value.trim();
+if(!k.startsWith('AIza')){alert('Sahi API Key dalo! AIza... se shuru hoti hai');return;}
+localStorage.setItem('gemini_key',k);API_KEY=k;
+document.getElementById('keyBox').style.display='none';
+alert('Key Saved! Ab neeche chat karo!');
+}
+async function send(){
+let input=document.getElementById('input');let text=input.value.trim();
+if(!text)return;if(!API_KEY){alert('Pehle upar API Key dalo aur Save karo!');return;}
+let msgs=document.getElementById('msgs');
+msgs.innerHTML+=`<div class="msg user">${text}</div>`;
+input.value='';
+let thinking=document.createElement('div');thinking.className='msg ai';thinking.id='thinking';thinking.innerHTML='⏳ GEMINI soch raha hai...';
+msgs.appendChild(thinking);msgs.scrollTop=msgs.scrollHeight;
+try{
+let res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,{
+method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({contents:[{parts:[{text:text}]}]})
+});
+let data=await res.json();
+document.getElementById('thinking').remove();
+if(data.error){msgs.innerHTML+=`<div class="msg ai">❌ Error: ${data.error.message}</div>`;}
+else{
+let reply=data.candidates[0].content.parts[0].text;
+msgs.innerHTML+=`<div class="msg ai">${reply.replace(/\n/g,'<br>')}</div>`;
+}
+}catch(e){document.getElementById('thinking').remove();msgs.innerHTML+=`<div class="msg ai">❌ Error: ${e.message}</div>`;}
+msgs.scrollTop=msgs.scrollHeight;
+}
+</script>
+</body>
+</html>
