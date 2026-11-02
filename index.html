@@ -44,7 +44,7 @@ let API_KEY = localStorage.getItem('gemini_key');
 if(API_KEY){document.getElementById('keyBox').style.display='none';}
 function saveKey(){
 let k=document.getElementById('apiKey').value.trim();
-if(!k.startsWith('AIza')){alert('Sahi API Key dalo! AIza... se shuru hoti hai');return;}
+if(k.length < 20){alert('Puri key copy karo!');return;}
 localStorage.setItem('gemini_key',k);API_KEY=k;
 document.getElementById('keyBox').style.display='none';
 alert('Key Saved! Ab neeche chat karo!');
