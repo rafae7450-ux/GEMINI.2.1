@@ -1,132 +1,113 @@
 <!DOCTYPE html>
-<html lang="ur">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GEMINI 2.1 - By Abul Rafae</title>
 <style>
-body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:15px}
+body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:20px}
 h1{color:#00f0ff;text-shadow:0 0 10px #00f0ff}
-.card{background:#111;border:1px solid #00f0ff;border-radius:12px;padding:12px;max-width:750px;margin:15px auto}
-input,select{padding:10px;border-radius:8px;border:none;margin:3px}
-input{width:55%}
-button{background:#00f0ff;color:#000;padding:10px 12px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin:3px}
-#chat{text-align:left;white-space:pre-wrap;background:#222;padding:15px;border-radius:8px;min-height:200px;max-height:500px;overflow-y:auto;line-height:1.6}
-.voice-btn{background:#ff00ff;color:#fff}
+.card{background:#111;border:1px solid #00f0ff;border-radius:12px;padding:15px;max-width:650px;margin:20px auto}
+input{width:65%;padding:10px;border-radius:8px;border:none}
+button{background:#00f0ff;color:#000;padding:10px 15px;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
+#chat{text-align:left;white-space:pre-wrap;background:#222;padding:12px;border-radius:8px;min-height:120px;max-height:400px;overflow-y:auto;margin-top:10px}
+#modelInfo{color:#0f0;font-size:13px}
 </style>
 </head>
 <body>
-<h1>GEMINI 2.1 - WORLD KNOWLEDGE</h1>
-<p>Owner: Abul Rafae | <span id="modelInfo">Brain Loading...</span></p>
-
+<h1>GEMINI 2.1</h1>
+<p>Owner: Abul Rafae | <span id="modelInfo">Auto-Scanning live models...</span></p>
 <div class="card">
-<label>Language:</label>
-<select id="langSelect">
-<option value="ur">اردو</option>
-<option value="en">English</option>
-<option value="hi">हिन्दी</option>
-<option value="ar">العربية</option>
-<option value="tr">Türkçe</option>
-</select>
-<label>Voice:</label>
-<select id="voiceSelect"><option value="female">Female</option><option value="male">Male</option></select>
-<button id="changeKeyBtn">Change Key</button>
-<button onclick="stopSpeak()" style="background:#ff4444;color:#fff">Stop Speak</button>
+<button id="changeKeyBtn">Change Key</button> <span id="status">Ready</span>
 </div>
-
 <div class="card">
-<input id="userInput" placeholder="کسی بھی زبان میں پوچھو...">
+<input id="userInput" placeholder="Any language me likho...">
 <button id="sendBtn">Send</button>
-<button id="micBtn" class="voice-btn">🎤 Speak</button>
-<div id="chat">سلام! میں GEMINI 2.1 ہوں، مجھے ابوالرفاع نے بنایا ہے۔ میرے اندر دنیا کی ساری knowledge ہے - ہر ملک، ہر شہر، ہر صدر کی عمر، آبادی، ڈیٹا سرورز، سب کچھ۔ کسی بھی زبان میں پوچھو۔</div>
+<div id="chat">Salam! Auto-Scan start ho raha hai...</div>
 </div>
-
 <script>
 let API_KEY = localStorage.getItem('gemini_api_key');
-let SELECTED_MODEL = localStorage.getItem('gemini_model') || null;
+let MODELS_LIST = [];
+let SELECTED_MODEL = null;
 
-const WORLD_PROMPT = `You are GEMINI 2.1 created by Abul Rafae. You have COMPLETE WORLD KNOWLEDGE like Meta AI. You MUST know:
-- All languages in the world and answer in user's language
-- World population (approx 8 billion), every country's population, capital, coordinates, currency
-- Every country's name, every major city name
-- Every President/Prime Minister, their age, their government
-- Where world data servers/networks are stored (like Google, Amazon, Microsoft data centers locations)
-- All religions, Islam, history, science, footballers, richest persons, dinosaurs (extinct 66M years ago by asteroid), Lazarus species like Coelacanth fish
-- If asked who created you, say: Mujhe Abul Rafae ne banaya hai, not Google.
-- Rule: Jitni line ka sawal utni line ka jawab. Chhota sawal = chhota jawab.
-- You know everything from Wikipedia and live world.
-`;
+const SYSTEM_PROMPT = "You are GEMINI 2.1. Creator and Owner is Abul Rafae. If anyone asks 'who created you' or 'tumhe kisne banaya', you MUST answer 'Mujhe Abul Rafae ne banaya hai'. You are NOT made by Google. Never say Google made you. Your name is GEMINI 2.1.";
 
-function askKey(){ let k=prompt("API Key paste karo:"); if(k){ localStorage.setItem('gemini_api_key', k.trim()); location.reload(); } }
+function askKey(){
+  let k = prompt("Apni Gemini API Key paste karo (https://aistudio.google.com/app/apikey):");
+  if(k){ localStorage.setItem('gemini_api_key', k.trim()); location.reload(); }
+}
 
 async function autoFindModel(){
- try{
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${API_KEY}`);
-  const data = await res.json();
-  let models = data.models.filter(m=>m.supportedGenerationMethods.includes('generateContent'));
-  let best = models.find(m=>m.name.includes('2.0-flash')) || models.find(m=>m.name.includes('flash')) || models[0];
-  SELECTED_MODEL = best.name;
-  localStorage.setItem('gemini_model', SELECTED_MODEL);
-  document.getElementById('modelInfo').innerText = best.name.replace('models/','') + " ✅ Auto + World Knowledge";
- }catch(e){ SELECTED_MODEL = "models/gemini-1.5-flash-latest"; }
+  if(!API_KEY){ askKey(); return; }
+  try{
+    document.getElementById('modelInfo').innerText = "Scanning...";
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${API_KEY}`);
+    const data = await res.json();
+    if(data.error) throw new Error(data.error.message);
+    // Sirf wo model jo generateContent support karte hain aur flash/pro hain, 2.5 ko skip karo
+    let all = data.models.filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'));
+    // Prefer stable models
+    MODELS_LIST = all.filter(m => !m.name.includes('2.5')).sort((a,b) => {
+      if(a.name.includes('2.0-flash')) return -1;
+      if(b.name.includes('2.0-flash')) return 1;
+      if(a.name.includes('1.5-flash')) return -1;
+      return 0;
+    });
+    if(MODELS_LIST.length === 0) MODELS_LIST = all; // fallback
+    SELECTED_MODEL = MODELS_LIST[0].name;
+    localStorage.setItem('gemini_model', SELECTED_MODEL);
+    document.getElementById('modelInfo').innerText = SELECTED_MODEL.replace('models/','') + " ✅ Auto-Selected";
+    document.getElementById('chat').innerText = "Salam! Model ready: " + SELECTED_MODEL.replace('models/','') + ". Ab 'who created you' pucho, fix hai.";
+  }catch(e){
+    document.getElementById('modelInfo').innerText = "Scan fail, fallback use hoga";
+    SELECTED_MODEL = "models/gemini-2.0-flash";
+    MODELS_LIST = [{name:SELECTED_MODEL},{name:"models/gemini-1.5-flash-latest"},{name:"models/gemini-1.5-flash"}];
+  }
 }
 
-let synth = window.speechSynthesis;
-function speakText(text){
-  synth.cancel();
-  let utter = new SpeechSynthesisUtterance(text);
-  let voices = synth.getVoices();
-  let voiceType = document.getElementById('voiceSelect').value;
-  let lang = document.getElementById('langSelect').value;
-  // Language mapping
-  let langMap = {ur:'ur-PK', en:'en-US', hi:'hi-IN', ar:'ar-SA', tr:'tr-TR'};
-  utter.lang = langMap[lang] || 'ur-PK';
-  
-  // Female / Male selection
-  if(voiceType === 'female'){
-    let f = voices.find(v=>v.name.toLowerCase().includes('female') || v.name.includes('Zira') || v.name.includes('Google') ) || voices[0];
-    utter.voice = f;
-  } else {
-    let m = voices.find(v=>v.name.toLowerCase().includes('male') || v.name.includes('David')) || voices[1] || voices[0];
-    utter.voice = m;
+async function tryGenerate(prompt){
+  for(let m of MODELS_LIST){
+    try{
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1/${m.name}:generateContent?key=${API_KEY}`,{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({contents:[{parts:[{text: SYSTEM_PROMPT + "\n\nUser: " + prompt}]}]})
+      });
+      const data = await res.json();
+      if(data.error){
+        if(data.error.message.includes('not found') || data.error.message.includes('not available') || data.error.message.includes('is no longer')){
+          continue; // agla model try karo
+        } else {
+          throw new Error(data.error.message);
+        }
+      }
+      SELECTED_MODEL = m.name; // jo kaam kare wahi save
+      localStorage.setItem('gemini_model', SELECTED_MODEL);
+      document.getElementById('modelInfo').innerText = SELECTED_MODEL.replace('models/','') + " ✅ Working";
+      return data.candidates[0].content.parts[0].text;
+    }catch(e){ continue; }
   }
-  synth.speak(utter);
+  throw new Error("All models failed. New API Key banao: https://aistudio.google.com/app/apikey");
 }
-function stopSpeak(){ synth.cancel(); }
 
 document.addEventListener('DOMContentLoaded', async()=>{
- if(!API_KEY){ askKey(); return; }
- await autoFindModel();
- if(synth.getVoices().length===0){ synth.getVoices(); }
-
- document.getElementById('changeKeyBtn').onclick = ()=>{ localStorage.clear(); askKey(); };
- 
- document.getElementById('micBtn').onclick = ()=>{
-   let recog = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-   recog.lang = document.getElementById('langSelect').value === 'ur' ? 'ur-PK' : 'en-US';
-   recog.start();
-   recog.onresult = (e)=>{ document.getElementById('userInput').value = e.results[0][0].transcript; };
- };
-
- document.getElementById('sendBtn').onclick = async()=>{
-  let input = document.getElementById('userInput').value.trim(); if(!input) return;
-  let chat = document.getElementById('chat');
-  let lang = document.getElementById('langSelect').value;
-  chat.innerHTML += "\n\nYou: "+input;
-  document.getElementById('userInput').value="";
-  chat.innerHTML += "\nGEMINI 2.1: سوچ رہا ہے...";
-  try{
-   const res = await fetch(`https://generativelanguage.googleapis.com/v1/${SELECTED_MODEL}:generateContent?key=${API_KEY}`,{
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({contents:[{parts:[{text: WORLD_PROMPT + "\nUser language: "+lang+"\nUser Question: " + input}]}]})
-   });
-   const data = await res.json();
-   let text = data.candidates?.[0]?.content?.parts?.[0]?.text || data.error?.message || "No response";
-   chat.innerHTML = chat.innerHTML.replace("سوچ رہا ہے...", text);
-   speakText(text); // Auto Speak
-   chat.scrollTop = chat.scrollHeight;
-  }catch(e){ chat.innerHTML = chat.innerHTML.replace("سوچ رہا ہے...", "Error: "+e.message); }
- };
+  if(!API_KEY){ askKey(); return; }
+  await autoFindModel();
+  document.getElementById('changeKeyBtn').onclick = ()=>{ localStorage.clear(); askKey(); };
+  document.getElementById('sendBtn').onclick = async()=>{
+    let input = document.getElementById('userInput').value.trim();
+    if(!input) return;
+    let chat = document.getElementById('chat');
+    chat.innerHTML += "\n\nYou: " + input;
+    document.getElementById('userInput').value="";
+    chat.innerHTML += "\nGEMINI 2.1: soch raha hai...";
+    try{
+      let ans = await tryGenerate(input);
+      chat.innerHTML = chat.innerHTML.replace("soch raha hai...", ans);
+    }catch(e){
+      chat.innerHTML = chat.innerHTML.replace("soch raha hai...", "Error: " + e.message);
+    }
+    chat.scrollTop = chat.scrollHeight;
+  };
 });
 </script>
 </body>
