@@ -3,98 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GEMINI 2.1 - Super Brain by Abul Rafae</title>
+<title>GEMINI 2.1 - All World Knowledge - By Abul Rafae</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui;background:#0a0a0a;color:#eee;display:flex;flex-direction:column;height:100vh;height:100dvh}
-.header{background:#111;padding:14px;text-align:center;border-bottom:2px solid #7c3aed;position:sticky;top:0;z-index:10}
-.header h3{color:#a78bfa}
-.header span{font-size:12px;opacity:.6}
-.chat{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
-.msg{padding:13px 16px;border-radius:18px;max-width:92%;line-height:1.5;white-space:pre-wrap;word-break:break-word;font-size:15px}
-.user{background:linear-gradient(135deg,#7c3aed,#4f46e5);align-self:flex-end;color:white}
-.bot{background:#1e1e1e;align-self:flex-start;border:1px solid #2a2a2a}
-.bot.loading{opacity:.6;font-style:italic}
-.bar{background:#111;padding:10px;display:flex;gap:8px;border-top:1px solid #222;flex-shrink:0}
-.bar input{flex:1;padding:13px 18px;border-radius:25px;border:1px solid #333;background:#1e1e1e;color:white;outline:none;font-size:16px}
-.bar input:focus{border-color:#7c3aed}
-.bar button{padding:12px 20px;border-radius:25px;border:none;background:#7c3aed;color:white;font-weight:bold;cursor:pointer}
-.chips{display:flex;gap:6px;padding:8px 14px;background:#111;overflow-x:auto;flex-shrink:0}
-.chip{white-space:nowrap;padding:6px 12px;border-radius:20px;background:#1e1e1e;border:1px solid #333;font-size:12px;cursor:pointer}
+body{font-family:system-ui;background:#0a0a0f;color:#e5e7eb;display:flex;flex-direction:column;height:100vh;height:100dvh}
+.header{background:linear-gradient(90deg,#4f46e5,#7c3aed);padding:14px;text-align:center;flex-shrink:0}
+.header b{color:white;font-size:19px;letter-spacing:1px}
+.header small{color:#ddd}
+.chat{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;background:#0f0f12}
+.msg{padding:12px 16px;border-radius:18px;max-width:92%;line-height:1.6;white-space:pre-wrap;word-break:break-word;font-size:14.5px;animation:pop .2s}
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.user{background:linear-gradient(135deg,#6366f1,#7c3aed);align-self:flex-end;color:white;border-bottom-right-radius:4px}
+.bot{background:#1e1e24;align-self:flex-start;border:1px solid #2a2a35;border-bottom-left-radius:4px}
+.inputbar{background:#15151b;padding:12px;display:flex;gap:10px;flex-shrink:0;border-top:1px solid #222}
+.inputbar input{flex:1;padding:13px 18px;border-radius:26px;border:1px solid #333;background:#1e1e24;color:white;outline:none;font-size:15px}
+.inputbar input:focus{border-color:#7c3aed}
+.inputbar button{padding:13px 22px;border-radius:26px;border:none;background:linear-gradient(135deg,#6366f1,#7c3aed);color:white;font-weight:bold;cursor:pointer}
+.typing{opacity:.7;font-style:italic}
 </style>
 </head>
 <body>
-<div class="header">
-<h3>🤖 GEMINI 2.1</h3>
-<span>By Abul Rafae - Answers ALL Subjects: Math • Science • SST • Geography • English • Code</span>
-</div>
-<div class="chips">
-<div class="chip" onclick="quick('Solve: (5+3)*12 / 2')">Math</div>
-<div class="chip" onclick="quick('Explain photosynthesis in simple words')">Science</div>
-<div class="chip" onclick="quick('Capital of Oman and its geography?')">Geography</div>
-<div class="chip" onclick="quick('Write essay on My Aim in Life')">English</div>
-<div class="chip" onclick="quick('What is History of Mughal Empire?')">SST</div>
-<div class="chip" onclick="quick('Write Python code for calculator')">Code</div>
-</div>
+<div class="header"><b>🌍 GEMINI 2.1 - ALL WORLD KNOWLEDGE</b><br><small>By Abul Rafae | Math Science SST Geography English Code - Everything!</small></div>
 <div class="chat" id="chat">
-<div class="msg bot">Salam Abul Rafae! 👋 I am your SUPER GEMINI 2.1
+<div class="msg bot">Salam Abul Rafae! 🔥 I am now GEMINI 2.1 ALL WORLD KNOWLEDGE EDITION!
 
-I can now answer:
-✅ ALL Math - algebra, calculus, 2+2 to complex equations
-✅ Science - Physics, Chemistry, Biology
-✅ SST, History, Geography
+I know EVERYTHING now:
+✅ Maths - any calculation
+✅ Science - physics chemistry biology
+✅ Geography - all capitals, countries, rivers
+✅ History / SST - kings, wars, moon, space
 ✅ English - essays, grammar, letters
-✅ Coding - Python, JS, HTML
+✅ Computer - Python, HTML, all code
+✅ Islamic Studies, General Knowledge
 
-Try me! Ask: "What is photosynthesis?" or "Solve x^2 + 5x + 6 = 0" or "Capital of Japan?"
+Ask anything! Example: "Who was first on moon?" "What is black hole?" "Capital of Oman?" "Solve x²=25"
 
-I am online and ready! 🚀</div>
+Created by Abul Rafae - Undetectable 2026 🚀</div>
 </div>
-<div class="bar">
-<input id="inp" placeholder="Ask anything... Math, Science, English..." onkeydown="if(event.key==='Enter')send()">
-<button onclick="send()">Send</button>
+<div class="inputbar">
+<input id="inp" placeholder="Ask ANYTHING in the world..." onkeydown="if(event.key==='Enter')send()">
+<button onclick="send()">Send 🚀</button>
 </div>
 <script>
 const chat=document.getElementById('chat');
 const inp=document.getElementById('inp');
 function add(t,c){const d=document.createElement('div');d.className='msg '+c;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d;}
-function quick(q){inp.value=q;send();}
-async function askAI(prompt){
- // Free AI API - Pollinations - No key needed, answers everything
+
+function localKnowledge(q){
+ let l=q.toLowerCase();
+ if(l.includes("who made you")||l.includes("who created you")||l.includes("who are you")||l.includes("creator")) return "I am GEMINI 2.1 - An advanced AI created by Abul Rafae. I was built by Abul Rafae in 2026 as an undetectable AI tutor with all world knowledge. I belong to Abul Rafae.";
+ if(l.includes("abul rafae")) return "Abul Rafae is the creator of GEMINI 2.1 - a brilliant developer from Oman who built this all-world-knowledge AI in 2026.";
  try{
-  const system = "You are GEMINI 2.1 created by Abul Rafae, a helpful tutor for all subjects. Answer short, clear, in simple English/Hinglish mix for students. If math, show steps. You know Math, Science, SST, Geography, English, Coding. Owner: Abul Rafae.";
-  const url = `https://text.pollinations.ai/${encodeURIComponent(system + "\n\nUser question: " + prompt + "\nAnswer:")}?model=openai`;
-  const res = await fetch(url);
-  if(!res.ok) throw new Error("api");
-  let txt = await res.text();
-  return txt.trim().slice(0,4000);
- }catch(e){
-  // Fallback local solver
-  return localSolver(prompt);
- }
-}
-function localSolver(q){
- let s=q.toLowerCase();
- try{
-  let expr=q.match(/^[0-9+\-*/().\s^%!]+$/);
-  if(expr){ let ans=Function('"use strict";return ('+q.replace(/\^/g,'**')+')')(); if(isFinite(ans)) return q+" = "+ans; }
+  if(/^[0-9+\-*/().\s^%]+$/.test(l.trim()) && /[0-9]/.test(l.trim()) && l.trim().length<35){
+   let ans=Function('"use strict";return ('+l.trim().replace(/\^/g,'**')+')')();
+   if(isFinite(ans)) return "Math Result: "+l.trim()+" = "+ans;
+  }
  }catch{}
- if(s.includes("2+2")) return "2+2 = 4";
- if(s.includes("photosynthesis")) return "Photosynthesis is process where plants make food using sunlight, CO2 and water. 6CO2 + 6H2O + Sunlight -> C6H12O6 + 6O2. Occurs in chloroplasts.";
- if(s.includes("capital")) return "Tell me which country? Eg: Oman = Muscat, Pakistan = Islamabad, India = New Delhi.";
- return "I am GEMINI 2.1 by Abul Rafae. I tried to connect to Super Brain but internet slow. Ask again: '"+q+"'. Tip: For math type like 12*8, for science ask clearly.";
+ return null;
 }
+
+async function getWikipedia(q){
+ try{
+  let res=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(q));
+  if(res.ok){let j=await res.json(); if(j.extract) return j.extract;}
+ }catch{}
+ return null;
+}
+
+async function getPollinations(q){
+ // Try 2 different free AIs
+ let apis=[
+  "https://text.pollinations.ai/"+encodeURIComponent("You are GEMINI 2.1 created by Abul Rafae. Answer short and accurate (max 500 words): "+q),
+  "https://api.duckduckgo.com/?q="+encodeURIComponent(q)+"&format=json&pretty=1"
+ ];
+ for(let url of apis){
+  try{
+   let r=await fetch(url,{cache:"no-store"});
+   if(r.ok){
+    let txt=await r.text();
+    if(txt.length>30){
+     try{let j=JSON.parse(txt); if(j.AbstractText) return j.AbstractText; if(j.related) return j.Abstract; }catch{}
+     if(!txt.includes("<html") && txt.length>30) return txt.slice(0,2500);
+    }
+   }
+  }catch{}
+ }
+ return null;
+}
+
+async function superAnswer(q){
+ // 1. Local
+ let local=localKnowledge(q);
+ if(local) return local;
+ // 2. Try Wikipedia for factual
+ let wiki=null;
+ if(q.split(" ").length<=4) wiki=await getWikipedia(q);
+ // 3. Try Pollinations AI (all world knowledge)
+ let ai=await getPollinations(q);
+ if(ai) return ai;
+ if(wiki) return wiki;
+ // 4. Ultimate fallback - explains it knows everything
+ return "🌍 GEMINI 2.1 by Abul Rafae Answer:\n\nYou asked: '"+q+"'\n\nI have all world knowledge! Here's what I know:\n\n"+getSmartFallback(q);
+}
+
+function getSmartFallback(q){
+ q=q.toLowerCase();
+ if(q.includes("moon")) return "First person on Moon: Neil Armstrong, July 20, 1969, Apollo 11. He said 'One small step for man, one giant leap for mankind'. Mission by NASA, USA. Also Buzz Aldrin walked same day.";
+ if(q.includes("sun")) return "Sun is a star at center of solar system. Diameter 1.39M km, 99.86% mass of solar system. Made of hydrogen/helium. Temperature 5500°C surface, 15M°C core.";
+ if(q.includes("earth")) return "Earth is 3rd planet from Sun. Only planet with life. 71% water, 29% land. Age 4.5 billion years. One moon.";
+ if(q.includes("black hole")) return "Black hole is region where gravity is so strong even light cannot escape. Formed when massive star collapses. At center singularity, boundary is event horizon.";
+ if(q.includes("gravity")) return "Gravity: Force that attracts objects. Discovered by Isaac Newton, explained by Einstein. Earth gravity g=9.8 m/s². Formula F=G*m1*m2/r².";
+ if(q.includes("photosynthesis")) return "Photosynthesis: Plants make food using CO2 + Water + Sunlight -> Glucose + Oxygen. Equation: 6CO2+6H2O+light = C6H12O6+6O2. In chloroplast.";
+ if(q.includes("capital")) return "I know all capitals! Example: Oman=Muscat, Pakistan=Islamabad, India=New Delhi, Japan=Tokyo, USA=Washington DC, UK=London, UAE=Abu Dhabi. Ask any country!";
+ if(q.includes("python")||q.includes("code")) return "I know all coding! Python, Java, HTML, JS. Example Python calculator:\n\ndef add(a,b): return a+b\nprint(add(5,3)) # 8\n\nAsk any code question!";
+ if(q.includes("who")||q.includes("when")||q.includes("what")||q.includes("where")||q.includes("why")) return "I am GEMINI 2.1 by Abul Rafae with all world knowledge. I can answer history, science, geography, math, English. Your question '"+q+"' - Please try again, my online AI will answer it fully. If offline, tell me topic: e.g. 'Explain black holes' or 'History of Ottoman Empire' and I will give full answer.";
+ return "I am GEMINI 2.1 created by Abul Rafae with all world knowledge - Math, Science, Geography, History, English, Coding. Ask any specific question like 'Who discovered gravity?' 'What is photosynthesis?' 'Solve 15*25' and I will answer!";
+}
+
 async function send(){
  let t=inp.value.trim(); if(!t) return;
  add(t,'user'); inp.value='';
- let load=add("Thinking... 🤔",'bot loading');
+ let load=add("Searching all world knowledge... 🌍🧠",'bot');
+ load.classList.add('typing');
  try{
-  let ans=await askAI(t);
+  let ans=await superAnswer(t);
   load.remove();
   add(ans,'bot');
- }catch{
+ }catch(e){
   load.remove();
-  add("Network slow! Trying offline mode...\n"+localSolver(t),'bot');
+  add("Error but I am GEMINI 2.1 by Abul Rafae. Try again: "+t,'bot');
  }
 }
 </script>
