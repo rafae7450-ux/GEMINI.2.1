@@ -7,15 +7,16 @@
 <style>
 body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:20px}
 h1{color:#00f0ff;text-shadow:0 0 10px #00f0ff}
-.card{background:#111;border:1px solid #00f0ff;border-radius:12px;padding:15px;max-width:600px;margin:20px auto}
+.card{background:#111;border:1px solid #00f0ff;border-radius:12px;padding:15px;max-width:650px;margin:20px auto}
 input{width:65%;padding:10px;border-radius:8px;border:none}
 button{background:#00f0ff;color:#000;padding:10px 15px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin:5px}
-#chat{text-align:left;margin-top:15px;white-space:pre-wrap;background:#222;padding:10px;border-radius:8px;min-height:100px}
+#chat{text-align:left;margin-top:15px;white-space:pre-wrap;background:#222;padding:12px;border-radius:8px;min-height:120px;max-height:400px;overflow-y:auto}
+#modelInfo{font-size:12px;color:#0f0;margin-top:5px}
 </style>
 </head>
 <body>
 <h1>GEMINI 2.1</h1>
-<p>Owner: Abul Rafae | Model: gemini-1.5-flash ✅</p>
+<p>Owner: Abul Rafae | <span id="modelInfo">Auto-Scanning Model...</span></p>
 <div class="card">
 <button id="changeKeyBtn">Change Key</button>
 <span id="status">Ready</span>
@@ -23,46 +24,86 @@ button{background:#00f0ff;color:#000;padding:10px 15px;border:none;border-radius
 <div class="card">
 <input id="userInput" placeholder="Any language me likho...">
 <button id="sendBtn">Send</button>
-<div id="chat">Salam! Kuch poocho...</div>
+<div id="chat">Salam! Kuch poocho... System auto model dhoond raha hai.</div>
 </div>
 <script>
 let API_KEY = localStorage.getItem('gemini_api_key');
+let SELECTED_MODEL = localStorage.getItem('gemini_model') || null;
+
 function askKey(){
   let k = prompt("Apni Gemini API Key paste karo:");
   if(k && k.trim() !== ""){
     localStorage.setItem('gemini_api_key', k.trim());
     API_KEY = k.trim();
+    localStorage.removeItem('gemini_model');
+    SELECTED_MODEL = null;
     document.getElementById('status').innerText = "Key Saved ✅";
+    autoFindModel();
   }
 }
+
+async function autoFindModel(){
+  if(!API_KEY) return;
+  document.getElementById('modelInfo').innerText = "Scanning best model...";
+  try{
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${API_KEY}`);
+    const data = await res.json();
+    if(data.error) throw new Error(data.error.message);
+    // Find model that supports generateContent
+    let models = data.models.filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'));
+    // Prefer flash models
+    let preferred = models.find(m => m.name.includes('2.0-flash')) || models.find(m => m.name.includes('1.5-flash')) || models[0];
+    if(preferred){
+      SELECTED_MODEL = preferred.name; // e.g. models/gemini-2.0-flash
+      localStorage.setItem('gemini_model', SELECTED_MODEL);
+      document.getElementById('modelInfo').innerText = "Model: " + SELECTED_MODEL.replace('models/','') + " ✅ Auto-Selected";
+      document.getElementById('chat').innerHTML = "Salam! Model ready: " + SELECTED_MODEL.replace('models/','') + ". Kuch poocho...";
+    }
+  }catch(e){
+    document.getElementById('modelInfo').innerText = "Auto scan failed, will try default: " + e.message;
+    SELECTED_MODEL = "models/gemini-2.0-flash";
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  if(!API_KEY){ askKey(); }
+  if(!API_KEY){ askKey(); } else { autoFindModel(); }
+  
   document.getElementById('changeKeyBtn').onclick = function(){
     localStorage.removeItem('gemini_api_key');
+    localStorage.removeItem('gemini_model');
     askKey();
     location.reload();
   };
+  
   document.getElementById('sendBtn').onclick = async function(){
-    const input = document.getElementById('userInput').value;
+    const input = document.getElementById('userInput').value.trim();
     if(!input) return;
     if(!API_KEY){ askKey(); return; }
+    if(!SELECTED_MODEL) SELECTED_MODEL = "models/gemini-2.0-flash";
+    
     const chat = document.getElementById('chat');
     chat.innerHTML += "\n\nYou: " + input;
     document.getElementById('userInput').value = "";
     chat.innerHTML += "\nGemini: soch raha hai...";
+    chat.scrollTop = chat.scrollHeight;
+
     try{
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,{
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1/${SELECTED_MODEL}:generateContent?key=${API_KEY}`,{
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({contents:[{parts:[{text:input}]}]})
       });
       const data = await res.json();
       if(data.error){ 
-        chat.innerHTML = chat.innerHTML.replace("soch raha hai...", "Error: " + data.error.message); 
+        // if model fails, try to rescan
+        chat.innerHTML = chat.innerHTML.replace("soch raha hai...", "Error: " + data.error.message + "\nDubara model scan kar raha hu...");
+        localStorage.removeItem('gemini_model');
+        autoFindModel();
       } else {
         let text = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
         chat.innerHTML = chat.innerHTML.replace("soch raha hai...", text);
       }
-    }catch(e){ chat.innerHTML += "\nError: " + e.message; }
+    }catch(e){ chat.innerHTML = chat.innerHTML.replace("soch raha hai...", "Network Error: " + e.message); }
+    chat.scrollTop = chat.scrollHeight;
   };
 });
 </script>
