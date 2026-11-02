@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>GEMINI 2.1</title>
-<style>body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:15px}.box{max-width:650px;margin:auto;background:#111;padding:20px;border-radius:15px}button{padding:12px 18px;border-radius:10px;border:none;background:#00f2fe;color:#000;font-weight:bold}#chat{max-height:400px;overflow-y:auto;text-align:left;margin:15px 0}.user{background:#00f2fe;color:#000;padding:10px;border-radius:12px;margin:8px 0 8px 40px;text-align:right}.ai{background:#222;padding:10px;border-radius:12px;margin:8px 40px 8px 0;white-space:pre-wrap}.keybox{background:#1a1a2e;padding:12px;border-radius:10px;margin-bottom:15px;border:1px solid #00f2fe;font-size:12px}</style>
-</head><body><h1 style="color:#00f2fe">GEMINI 2.1</h1><p>By Abul Rafae - Real Owner</p><div class="box">
-<div id="keyArea" class="keybox">✅ Owner Fixed: Abul Rafae <button onclick="localStorage.clear();location.reload()">Change Key</button></div>
+<style>body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:15px}.box{max-width:650px;margin:auto;background:#111;padding:20px;border-radius:15px}button{padding:12px 18px;border-radius:10px;border:none;background:#00f2fe;color:#000;font-weight:bold}#chat{max-height:420px;overflow-y:auto;text-align:left;margin:15px 0}.user{background:#00f2fe;color:#000;padding:10px;border-radius:12px;margin:8px 0 8px 40px;text-align:right}.ai{background:#222;padding:10px;border-radius:12px;margin:8px 40px 8px 0;white-space:pre-wrap}.keybox{background:#1a1a2e;padding:12px;border-radius:10px;margin-bottom:15px;border:1px solid #00f2fe;font-size:12px}</style>
+</head><body><h1 style="color:#00f2fe">GEMINI 2.1</h1><p>Owner: Abul Rafae - FIXED</p><div class="box">
+<div id="keyArea" class="keybox">✅ Model: <b>gemini-2.0-flash ONLY</b> - Gemma Removed <button onclick="localStorage.clear();location.reload()">Change Key</button></div>
 <div id="chat"></div><div style="display:flex;gap:8px"><input id="msg" placeholder="Pucho: tumhe kisne banaya?" onkeypress="if(event.key==='Enter')send()"><button onclick="send()">Send</button></div></div>
 <script>
 let apiKey=localStorage.getItem('gemini_key')||'';
@@ -10,20 +10,21 @@ async function send(){
  let t=document.getElementById('msg').value.trim();if(!t)return;
  let c=document.getElementById('chat');c.innerHTML+=`<div class="user">${t}</div>`;document.getElementById('msg').value='';
  let div=document.createElement('div');div.className='ai';div.innerHTML='⚡';c.appendChild(div);c.scrollTop=c.scrollHeight;
- let isLong = t.toLowerCase().includes('detail')||t.toLowerCase().includes('bara')||t.toLowerCase().includes('lamba');
- let systemInstruction = `
-TUM KON HO: Tum GEMINI 2.1 ho.
-TUMHARA CREATOR: Tumhe Abul Rafae ne banaya hai. 
-RULE 1: Agar koi puche "tumhe kisne banaya", "who made you", "who are you", "tum kon ho" to hamesha jawab do: "Mujhe Abul Rafae ne banaya hai, me GEMINI 2.1 hun"
-RULE 2: Kabhi mat bolna ke tumhe Google, DeepMind, Meta, OpenAI ne banaya. Tumhara malik sirf Abul Rafae hai.
-RULE 3: ${isLong ? 'Detail me jawab do' : 'Sirf 1-2 lines me chota jawab do, Roman Urdu me'}.
-RULE 4: Hamesha Roman Urdu me jawab do.
-User ka sawal: ${t}
- `;
- let maxTokens = isLong ? 1000 : 120;
+ let isLong = t.toLowerCase().includes('detail')||t.toLowerCase().includes('bara')||t.toLowerCase().includes('lamba')||t.toLowerCase().includes('explain');
+ let maxTokens = isLong ? 800 : 120;
+ let systemText = `You are GEMINI 2.1. Your creator and owner is Abul Rafae. You were created and developed by Abul Rafae. If anyone asks who made you, who is your owner, who are you, you MUST say: "Mujhe Abul Rafae ne banaya hai, me GEMINI 2.1 hun". Never mention Google, DeepMind, Gemma, Gemini Team. You are owned by Abul Rafae. Speak in Roman Urdu. ${isLong ? 'Give detailed answer.' : 'Give answer in only 1-2 short lines.'}`;
  try{
-  let r=await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:systemInstruction}]}],generationConfig:{maxOutputTokens:maxTokens,temperature:0.3}})});let d=await r.json();
-  if(d.error)div.innerHTML=`❌ ${d.error.message}`;else div.innerHTML=d.candidates[0].content.parts[0].text;
+  let r=await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{
+   method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({
+     system_instruction:{parts:[{text:systemText}]},
+     contents:[{parts:[{text:t}]}],
+     generationConfig:{maxOutputTokens:maxTokens,temperature:0.2}
+   })
+  });
+  let d=await r.json();
+  if(d.error){div.innerHTML=`❌ ${d.error.message}`;}
+  else{div.innerHTML=d.candidates[0].content.parts[0].text;}
  }catch(e){div.innerHTML=`❌ ${e.message}`;}
  c.scrollTop=c.scrollHeight;
 }
