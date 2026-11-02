@@ -1,14 +1,25 @@
 let API_KEY = localStorage.getItem('gemini_api_key');
 
 function askKey(){
- let k = prompt("Apni Gemini API Key paste karo:");
- if(k){ 
-   localStorage.setItem('gemini_api_key', k.trim()); 
-   API_KEY = k.trim(); 
- }
+  let k = prompt("Apni Gemini API Key paste karo:");
+  if(k && k.trim() !== ""){
+    localStorage.setItem('gemini_api_key', k.trim());
+    API_KEY = k.trim();
+  }
 }
-document.getElementById('changeKeyBtn').onclick = function(){
- localStorage.removeItem('gemini_api_key');
- askKey();
- location.reload();
-};
+
+// Page poora load hone ke baad button ko pakdo
+document.addEventListener('DOMContentLoaded', () => {
+  if(!API_KEY){
+    askKey();
+  }
+  
+  let btn = document.getElementById('changeKeyBtn');
+  if(btn){
+    btn.onclick = function(){
+      localStorage.removeItem('gemini_api_key');
+      askKey();
+      location.reload();
+    }
+  }
+});
