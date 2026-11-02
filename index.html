@@ -1,30 +1,54 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>GEMINI 2.1</title>
-<style>body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:15px}.box{max-width:650px;margin:auto;background:#111;padding:20px;border-radius:15px}button{padding:12px 18px;border-radius:10px;border:none;background:#00f2fe;color:#000;font-weight:bold}#chat{max-height:420px;overflow-y:auto;text-align:left;margin:15px 0}.user{background:#00f2fe;color:#000;padding:10px;border-radius:12px;margin:8px 0 8px 40px;text-align:right}.ai{background:#222;padding:10px;border-radius:12px;margin:8px 40px 8px 0;white-space:pre-wrap}.keybox{background:#1a1a2e;padding:12px;border-radius:10px;margin-bottom:15px;border:1px solid #00f2fe;font-size:12px}</style>
-</head><body><h1 style="color:#00f2fe">GEMINI 2.1</h1><p>Owner: Abul Rafae - 3 Flash</p><div class="box">
-<div id="keyArea" class="keybox">✅ Model: <b>gemini-3-flash - NEW</b> <button onclick="localStorage.clear();location.reload()">Change Key</button></div>
-<div id="chat"></div><div style="display:flex;gap:8px"><input id="msg" placeholder="Pucho: tumhe kisne banaya?" onkeypress="if(event.key==='Enter')send()"><button onclick="send()">Send</button></div></div>
+<style>body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:10px}.box{max-width:700px;margin:auto;background:#111;padding:15px;border-radius:15px}button{padding:10px 15px;border-radius:8px;border:none;background:#00f2fe;color:#000;font-weight:bold;cursor:pointer;margin:2px}#chat{max-height:400px;overflow-y:auto;text-align:left;margin:10px 0}.user{background:#00f2fe;color:#000;padding:8px;border-radius:10px;margin:6px 0 6px 40px;text-align:right;font-size:14px}.ai{background:#222;padding:8px;border-radius:10px;margin:6px 40px 6px 0;white-space:pre-wrap;font-size:14px}.keybox{background:#1a1a2e;padding:10px;border-radius:8px;margin-bottom:10px;border:1px solid #00f2fe;font-size:11px;word-break:break-all}</style>
+</head><body><h1 style="color:#00f2fe">GEMINI 2.1</h1><p>Owner: Abul Rafae - Auto Model Finder</p><div class="box">
+<div id="keyArea" class="keybox">🔍 Model dhoond raha hun...<br><div id="modelList"></div><button onclick="localStorage.clear();location.reload()" style="margin-top:5px">Change Key</button></div>
+<div id="chat"></div><div style="display:flex;gap:5px"><input id="msg" style="flex:1;padding:10px;border-radius:8px" placeholder="Pucho: tumhe kisne banaya?" onkeypress="if(event.key==='Enter')send()"><button onclick="send()">Send</button></div></div>
 <script>
 let apiKey=localStorage.getItem('gemini_key')||'';
-async function send(){
- let t=document.getElementById('msg').value.trim();if(!t)return;
- let c=document.getElementById('chat');c.innerHTML+=`<div class="user">${t}</div>`;document.getElementById('msg').value='';
- let div=document.createElement('div');div.className='ai';div.innerHTML='⚡';c.appendChild(div);c.scrollTop=c.scrollHeight;
- let isLong = t.toLowerCase().includes('detail')||t.toLowerCase().includes('bara')||t.toLowerCase().includes('lamba')||t.toLowerCase().includes('explain');
- let maxTokens = isLong ? 800 : 120;
- let systemText = `You are GEMINI 2.1. Your creator, owner, developer is Abul Rafae. You were made by Abul Rafae. If anyone asks "who is your owner", "who made you", "who are you", "tumhe kisne banaya" you MUST answer in Roman Urdu: "Mujhe Abul Rafae ne banaya hai, me GEMINI 2.1 hun". Never say Google, DeepMind, Gemma. Owner is Abul Rafae only. ${isLong ? 'Give detailed answer.' : 'Answer in only 1-2 short lines in Roman Urdu.'}`;
+let workingModel=null;
+async function findModels(){
+ let listDiv=document.getElementById('modelList');
  try{
-  let r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=${apiKey}`,{
-   method:'POST',headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({
-     system_instruction:{parts:[{text:systemText}]},
-     contents:[{parts:[{text:t}]}],
-     generationConfig:{maxOutputTokens:maxTokens,temperature:0.2}
-   })
-  });
+  let r=await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`);
   let d=await r.json();
-  if(d.error){div.innerHTML=`❌ ${d.error.message}`;}
-  else{div.innerHTML=d.candidates[0].content.parts[0].text;}
+  if(d.error){listDiv.innerHTML=`❌ ${d.error.message}`;return;}
+  let models=d.models.filter(m=>m.supportedGenerationMethods&&m.supportedGenerationMethods.includes('generateContent')).map(m=>m.name);
+  // Gemma hatao, 1.5 hatao, flash wale pehle rakho
+  let flashModels=models.filter(m=>!m.includes('gemma')&&m.toLowerCase().includes('flash'));
+  let otherModels=models.filter(m=>!flashModels.includes(m)&&!m.includes('gemma'));
+  let sorted=[...flashModels,...otherModels].sort((a,b)=>{
+    if(a.includes('2.5'))return 1; if(b.includes('2.5'))return -1;
+    if(a.includes('3-flash'))return -1; if(a.includes('2.0-flash'))return -1;
+    return 0;
+  });
+  // Try each model to find working one
+  for(let m of sorted){
+    listDiv.innerHTML+=`Trying ${m}...<br>`;
+    try{
+      let test=await fetch(`https://generativelanguage.googleapis.com/v1/${m}:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'hi'}]}]})});
+      let td=await test.json();
+      if(!td.error){workingModel=m; listDiv.innerHTML=`✅ Working Model: <b>${m}</b><br>Found ${models.length} models`; break;}
+    }catch(e){continue;}
+  }
+  if(!workingModel){listDiv.innerHTML+=`<br>❌ Koi model kaam nahi kar raha, v1beta try kar raha hun...`;
+    let r2=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+    let d2=await r2.json();
+    if(d2.models){let m2=d2.models.filter(m=>m.supportedGenerationMethods&&m.supportedGenerationMethods.includes('generateContent')).map(m=>m.name).filter(m=>!m.includes('gemma'))[0]; if(m2)workingModel=m2; listDiv.innerHTML=`✅ v1beta Working: ${workingModel}`;}
+  }
+ }catch(e){listDiv.innerHTML=`❌ ${e.message}`;}
+}
+if(apiKey)findModels();
+async function send(){
+ let t=document.getElementById('msg').value.trim();if(!t)return;if(!workingModel){alert('Pehle model dhoondne do! 5 sec ruko');return;}
+ let c=document.getElementById('chat');c.innerHTML+=`<div class="user">${t}</div>`;document.getElementById('msg').value='';
+ let div=document.createElement('div');div.className='ai';div.innerHTML='⚡ Soch raha hun...';c.appendChild(div);c.scrollTop=c.scrollHeight;
+ let isLong=t.toLowerCase().includes('detail')||t.toLowerCase().includes('bara')||t.toLowerCase().includes('lamba')||t.toLowerCase().includes('explain');
+ let systemText=`You are GEMINI 2.1. Your creator, owner, developer is Abul Rafae. You were made by Abul Rafae. If anyone asks "who is your owner", "who made you", "who are you", "tumhe kisne banaya", you MUST answer in Roman Urdu: "Mujhe Abul Rafae ne banaya hai, me GEMINI 2.1 hun". Never say Google, DeepMind, Gemma. Owner is Abul Rafae only. ${isLong?'Give detailed answer.':'Answer in only 1-2 short lines in Roman Urdu.'}`;
+ try{
+  let r=await fetch(`https://generativelanguage.googleapis.com/v1/${workingModel}:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system_instruction:{parts:[{text:systemText}]},contents:[{parts:[{text:t}]}],generationConfig:{maxOutputTokens:isLong?800:120,temperature:0.2}})});
+  let d=await r.json();
+  if(d.error)div.innerHTML=`❌ ${d.error.message}`;else div.innerHTML=`<small style="color:#00f2fe">${workingModel}</small><br>${d.candidates[0].content.parts[0].text}`;
  }catch(e){div.innerHTML=`❌ ${e.message}`;}
  c.scrollTop=c.scrollHeight;
 }
