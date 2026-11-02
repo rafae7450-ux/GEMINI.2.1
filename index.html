@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>GEMINI 2.1 - By Abul Rafae</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#00f2fe">
-<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/4712/4712109.png">
-<style>body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:10px}.box{max-width:700px;margin:auto;background:#111;padding:15px;border-radius:15px}button{padding:10px 15px;border-radius:8px;border:none;background:#00f2fe;color:#000;font-weight:bold}#chat{max-height:420px;overflow-y:auto;text-align:left;margin:10px 0}.user{background:#00f2fe;color:#000;padding:8px;border-radius:10px;margin:6px 0 6px 40px;text-align:right}.ai{background:#222;padding:8px;border-radius:10px;margin:6px 40px 6px 0;white-space:pre-wrap}.keybox{background:#1a1a2e;padding:10px;border-radius:8px;margin-bottom:10px;border:1px solid #00f2fe;font-size:11px}</style>
-</head><body><h1 style="color:#00f2fe">GEMINI 2.1</h1><p>Owner: Abul Rafae</p><div class="box">
-<div id="keyArea" class="keybox">✅ Model: Auto - All Languages<div id="modelList">Loading...</div><button onclick="localStorage.clear();location.reload()">Change Key</button></div>
-<div id="chat"></div><div style="display:flex;gap:5px"><input id="msg" style="flex:1;padding:10px;border-radius:8px" placeholder="Any language..." onkeypress="if(event.key==='Enter')send()"><button onclick="send()">Send</button></div></div>
-<script>
-let apiKey=localStorage.getItem('gemini_key')||'';let workingModel=null;
-async function findModels(){let l=document.getElementById('modelList');try{let r=await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`);let d=await r.json();if(d.error){l.innerHTML=`❌ ${d.error.message}`;return;}let m=d.models.filter(x=>x.supportedGenerationMethods&&x.supportedGenerationMethods.includes('generateContent')).map(x=>x.name);let f=m.filter(x=>!x.includes('gemma')&&x.toLowerCase().includes('flash'));let s=[...f,...m.filter(x=>!f.includes(x)&&!x.includes('gemma'))];for(let mod of s){try{let t=await fetch(`https://generativelanguage.googleapis.com/v1/${mod}:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'hi'}]}]})});let td=await t.json();if(!td.error){workingModel=mod;l.innerHTML=`✅ ${mod}`;break;}}catch(e){}} }catch(e){l.innerHTML=`❌ ${e.message}`;}}
-if(apiKey)findModels();
-async function send(){let t=document.getElementById('msg').value.trim();if(!t)return;if(!workingModel){alert('5 sec ruko');return;}let c=document.getElementById('chat');c.innerHTML+=`<div class="user">${t}</div>`;document.getElementById('msg').value='';let d=document.createElement('div');d.className='ai';d.innerHTML='⚡';c.appendChild(d);c.scrollTop=c.scrollHeight;let isLong=t.toLowerCase().includes('detail')||t.toLowerCase().includes('bara');let sys=`You are GEMINI 2.1. Creator Abul Rafae. If asked owner, say in user language: English->"I was created by Abul Rafae", Roman Urdu->"Mujhe Abul Rafae ne banaya hai". Never say Google. Speak same language as user. ${isLong?'Detailed':'Short 1-2 lines'}`;try{let r=await fetch(`https://generativelanguage.googleapis.com/v1/${workingModel}:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system_instruction:{parts:[{text:sys}]},contents:[{parts:[{text:t}]}],generationConfig:{maxOutputTokens:isLong?800:150,temperature:0.4}})});let j=await r.json();d.innerHTML=j.error?`❌ ${j.error.message}`:j.candidates[0].content.parts[0].text;}catch(e){d.innerHTML=`❌ ${e.message}`;}c.scrollTop=c.scrollHeight;}
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}
-</script></body></html>
+let API_KEY = localStorage.getItem('gemini_api_key');
+
+function askKey(){
+ let k = prompt("Apni Gemini API Key paste karo:");
+ if(k){ 
+   localStorage.setItem('gemini_api_key', k.trim()); 
+   API_KEY = k.trim(); 
+ }
+}
+document.getElementById('changeKeyBtn').onclick = function(){
+ localStorage.removeItem('gemini_api_key');
+ askKey();
+ location.reload();
+};
