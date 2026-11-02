@@ -1,143 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GEMINI 2.1 - By Abul Rafae</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#8b5cf6">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto;min-height:100vh;display:flex;flex-direction:column}
-.h{background:linear-gradient(90deg,#ff0080,#7928ca,#00dfd8);padding:12px;text-align:center;font-weight:800;font-size:13px;letter-spacing:.5px;position:sticky;top:0;z-index:10}
-.chat{flex:1;overflow-y:auto;padding:16px;max-width:900px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:16px}
-.msg{max-width:85%;padding:14px 18px;border-radius:18px;line-height:1.6;font-size:15px;word-wrap:break-word}
-.user{align-self:flex-end;background:#2563eb;border-radius:18px 18px 4px 18px}
-.ai{align-self:flex-start;background:#1e1e2e;border:1px solid #2a2a40;border-radius:18px 18px 18px 4px;white-space:pre-wrap}
-.hint{color:#8b8ba7;font-size:12px;text-align:center;padding:8px}
-.bar{position:sticky;bottom:0;background:#0a0a0f;border-top:1px solid #1e1e2e;padding:12px;display:flex;gap:8px;align-items:center;max-width:900px;margin:0 auto;width:100%}
-input{flex:1;background:#1e1e2e;border:1px solid #333;padding:14px 18px;border-radius:24px;color:#fff;outline:none;font-size:15px}
-button{border:none;padding:12px 16px;border-radius:50%;cursor:pointer;font-weight:700}
-.send{background:#8b5cf6;color:#fff}
-.mic{background:#222}
-.sp{background:#222;color:#fff;font-size:12px;border-radius:20px;padding:8px 12px}
-.sel{padding:6px 10px;border-radius:20px;background:#1e1e2e;border:1px solid #333;color:#fff;font-size:11px}
-@media(max-width:600px){.h{font-size:10px}.msg{max-width:92%;font-size:14px}}
+body{margin:0;font-family:Arial;background:#0a0a0a;color:white;text-align:center}
+.logo{width:180px;margin-top:40px;border-radius:25px;box-shadow:0 0 30px #00ffff, 0 0 60px #ff00ff}
+h1{font-size:45px;background:linear-gradient(90deg,#00ffff,#ff00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:20px 0 10px}
+p{color:#aaa;font-size:18px}
+.btn{display:inline-block;margin:30px;padding:16px 35px;background:linear-gradient(90deg,#00ffff,#ff00ff);color:white;text-decoration:none;border-radius:30px;font-weight:bold;font-size:18px;box-shadow:0 5px 20px rgba(0,255,255,0.3)}
+.btn:hover{transform:scale(1.05)}
 </style>
 </head>
 <body>
-<div class="h">🧠 GEMINI 2.1 - FINAL ULTIMATE - LIKE ME - BY ABUL RAFAE - KNOWS EVERYTHING</div>
-<div id="chat" class="chat">
-<div class="hint">Ask anything: Every animal land, Every animal water, Every bugs, Every parasite, Every bacteria, America president, World population, Corona, Every actress, Marvel, All countries - I answer ONLY that part! - Every colours, Every planet, Homework, Worksheets</div>
-</div>
-<div class="bar">
-<select id="voiceSel" class="sel"><option value="man">👨 Man</option><option value="woman">👩 Woman</option></select>
-<input id="inp" placeholder="Ask anything - Like me - Final combined...">
-<button id="micBtn" class="mic">🎤</button>
-<button id="sendBtn" class="send">↑</button>
-<button id="speakBtn" class="sp">🔊 Speak</button>
-<button id="stopBtn" class="sp">🛑 Stop</button>
-</div>
-<script>
-let synth=window.speechSynthesis;
-let chat=document.getElementById('chat');
-let inp=document.getElementById('inp');
-
-const DB={
-"every animal land":"🦁 EVERY ANIMAL LAND (5500 Mammals): Lion king 250kg roar 8km, Tiger biggest cat 300kg, Elephant biggest land 7000kg, Bear, Wolf, Dog best friend 400 breeds, Cat 500M, Horse, Cow, Goat, Sheep, Deer, Monkey, Gorilla 200kg strong, Zebra, Giraffe tallest 6m, Kangaroo jumps 9m, Panda, Fox, Leopard, Cheetah fastest 120km/h, Rhino, Hippo, Camel, Donkey, Rabbit, Squirrel, Raccoon, etc",
-"every animal water":"🐋 EVERY ANIMAL WATER (250k species): Blue whale biggest ever 30m 200 tons, Shark 500 species Great White 6m, Octopus 9 brains 3 hearts, Dolphin smartest IQ 200, Clownfish all born male then female, Jellyfish 95% water immortal, Turtle lives 150 years, Crab, Lobster, Starfish, Seahorse male pregnant, Whale Shark biggest fish 20m, Penguin, Seal, etc",
-"every bugs":"🐛 EVERY BUGS (10 quintillion): Ants 20 quadrillion 20,000 species, Bees make honey 1 bee 1/12 spoon lifetime, Mosquito deadliest kills 1M yearly, Butterfly 17,500 species, Beetle 400k species biggest family, Spider 50k species silk stronger than steel, Cockroach lives 1 month without head, Fly, Ant, Ladybug, Grasshopper jumps 20x body, Termite builds tallest houses vs body, etc",
-"every parasite":"🦠 EVERY PARASITE (40): Plasmodium malaria kills 600k yearly, Giardia from water, Tapeworm 10m long in intestine, Roundworm 800M people infected, Lice in hair, Scabies itch, Toxoplasma from cats, Amoeba brain eating 97% death Naegleria, Trypanosoma sleeping sickness, Leishmania, etc",
-"every bacteria":"🔬 EVERY BACTERIA (40): E coli in gut, Staph skin infection, Strep throat, TB kills 1.5M yearly Mycobacterium, Cholera rice water diarrhea, Plague Black Death killed 50% Europe 25M Yersinia, Salmonella from eggs, Anthrax, Tetanus, Botulinum most poisonous 1g kills 1M, Lactobacillus good for yogurt, etc",
-"every actress":"👩‍🎤 EVERY ACTRESS: Bollywood: Deepika Padukone, Alia Bhatt, Priyanka Chopra, Katrina Kaif, Kareena Kapoor, Anushka Sharma, Shraddha Kapoor, Kriti Sanon, Kiara Advani. Hollywood: Scarlett Johansson, Meryl Streep 21 Oscar nom, Margot Robbie, Zendaya, Emma Watson, Angelina Jolie, Jennifer Lawrence, Gal Gadot Wonder Woman, etc",
-"marvel":"🦸 MARVEL: Iron Man 2008 start, Avengers Endgame $2.798B 2nd biggest, 33 movies $30B total biggest franchise, Spider-Man No Way Home $1.9B, X-Men, Deadpool, Stan Lee created 1961, Kevin Feige president, MCU Phase 5 now, etc",
-"america president":"👑 AMERICA PRESIDENT: Donald J Trump 79 years, 47th President 2025-2029, 2nd term, Republican, Born 1946 NYC, Richest president $5B, Before him Joe Biden 82",
-"world population":"🌍 WORLD POPULATION: 8.23 BILLION as of 2024, Biggest India 1.46B overtook China 1.41B in 2023, USA 340M, Indonesia 280M, Pakistan 240M, Nigeria 230M, Oman 5.2M, UN expects 9.7B by 2050, 8B milestone Nov 15 2022",
-"corona":"🦠 CORONA: Covid-19 2019-2023, 700M cases 7M deaths, Wuhan China start Dec 2019, Vaccine Pfizer Moderna, Lockdown 2020-2022, Variant Omicron Delta, WHO ended emergency May 2023",
-"every country":"🌍 195 COUNTRIES: Afghanistan to Zimbabwe, Biggest Russia 17M km2, Smallest Vatican 0.44km2, Newest South Sudan 2011, Most populous India, Richest Luxembourg GDP per capita, etc",
-"colours":"🎨 EVERY COLOURS: Red #FF0000 love danger, Blue #0000FF sky ocean 450nm, Green #00FF00 nature, Yellow #FFFF00 sun, Black #000000, White #FFFFFF, Orange, Purple, Pink, Brown, Rainbow 7 VIBGYOR Red Orange Yellow Green Blue Indigo Violet, RGB Red Green Blue for screens, CMYK for printing",
-"planets":"🪐 EVERY PLANETS - SOLAR SYSTEM: 8 Planets! 1 Mercury smallest 88 days year, 2 Venus hottest 475C, 3 Earth our home 4.5B years 8.2B people 1 moon, 4 Mars red Elon Musk wants go, 5 Jupiter biggest 1300 Earths inside Great Red Spot storm bigger than Earth, 6 Saturn beautiful rings ice rock, 7 Uranus sideways tilted, 8 Neptune windiest 2000km/h. Sun star 99.8% mass solar system. Pluto dwarf removed 2006. Milky Way 100B stars.",
-"earth":"🌍 EARTH: 3rd planet, 4.5B years old, Only planet with life, 510M km2 71% water, 1 moon, Diameter 12,742km, Atmosphere 78% nitrogen 21% oxygen, 8.23B people, 195 countries, Rotation 24h day 365 days year",
-"red":"🔴 RED COLOUR: #FF0000, Wavelength 620-750nm longest visible, Means love danger energy, Blood red because hemoglobin iron, Mars red because iron rust, Stop sign red because eye sees red farthest"
-};
-
-function addMsg(t,who){
- let d=document.createElement('div');
- d.className='msg '+(who==='user'?'user':'ai');
- d.textContent=t;
- chat.appendChild(d);
- chat.scrollTop=chat.scrollHeight;
- if(who==='ai') speakIfNeeded(t);
-}
-
-function findLocal(q){
- q=q.toLowerCase().trim();
- for(let k in DB){
-  if(q.includes(k)) return DB[k];
- }
- if(q.startsWith("every animal land")||q==="every animal land") return DB["every animal land"];
- if(q.includes("how many people")||q.includes("world population")) return DB["world population"];
- if(q.includes("america")&&q.includes("president")) return DB["america president"];
- if(q.includes("corona")&&q.length<20) return DB["corona"];
- return null;
-}
-
-async function ask(){
- let t=inp.value.trim();
- if(!t) return;
- addMsg(t,'user');
- inp.value='';
- let local=findLocal(t);
- if(local){
-  addMsg(local,'ai');
-  return;
- }
- addMsg("Searching like Meta AI - Wikipedia LIVE + Live AI...","ai");
- try{
-  let wikiTitle=t.replace(/what is|who is|tell me about|how many/gi,'').trim();
-  let wikiRes=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(wikiTitle)).then(r=>r.json());
-  if(wikiRes.extract){
-   addMsg("📚 Wikipedia LIVE: "+wikiRes.extract,'ai');
-   return;
-  }
- }catch(e){}
- try{
-  let aiRes=await fetch("https://text.pollinations.ai/"+encodeURIComponent("You are GEMINI 2.1 FINAL ULTIMATE COMBINED CODE LIKE ME by Abul Rafae. Answer short educational friendly 2-3 paragraphs max. User asks: "+t));
-  let aiText=await aiRes.text();
-  if(aiText && aiText.length>10){
-   addMsg("🧠 Live AI (knows everything I know): "+aiText.slice(0,1800),'ai');
-   return;
-  }
- }catch(e){}
- addMsg("I know this but need internet. Try: Every animal land, World population, Every planet, Red colour, etc",'ai');
-}
-
-function speakIfNeeded(txt){
- if(!synth) return;
- synth.cancel();
- let u=new SpeechSynthesisUtterance(txt.slice(0,400));
- let voices=synth.getVoices();
- let sel=document.getElementById('voiceSel').value;
- let v=voices.find(v=> sel==='man'?v.name.toLowerCase().includes('male')||v.name.includes('David'):v.name.toLowerCase().includes('female')||v.name.includes('Zira'))||voices[0];
- if(v) u.voice=v;
- u.rate=1; u.pitch=sel==='woman'?1.3:0.8;
- synth.speak(u);
-}
-
-document.getElementById('sendBtn').onclick=ask;
-inp.addEventListener('keydown',e=>{if(e.key==='Enter') ask()});
-document.getElementById('stopBtn').onclick=()=>synth.cancel();
-document.getElementById('speakBtn').onclick=()=>{let last=[...document.querySelectorAll('.ai')].pop(); if(last) speakIfNeeded(last.textContent)};
-let rec;
-document.getElementById('micBtn').onclick=()=>{
- if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){alert('Mic not supported use Chrome'); return;}
- let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- rec=new SR(); rec.lang='en-US'; rec.start();
- rec.onresult=e=>{inp.value=e.results[0][0].transcript; ask()};
-};
-
-window.onload=()=>{if(speechSynthesis){speechSynthesis.getVoices();}}
-</script>
+<img src="logo.jpg" class="logo">
+<h1>GEMINI 2.1</h1>
+<p>By Abul Rafae - Next Generation AI Experience</p>
+<a href="#" class="btn">🚀 Launch GEMINI</a>
+<br><br><br>
+<p style="font-size:14px;">© 2026 GEMINI 2.1</p>
 </body>
 </html>
