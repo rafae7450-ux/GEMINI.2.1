@@ -1,0 +1,13 @@
+{
+  "name": "GEMINI 2.1 - By Abul Rafae",
+  "short_name": "GEMINI 2.1",
+  "start_url": "/GEMINI.2.1/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#00f2fe",
+  "icons": [{
+    "src": "https://cdn-icons-png.flaticon.com/512/4712/4712109.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }]
+}
