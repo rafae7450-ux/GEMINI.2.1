@@ -1,0 +1,25 @@
+{
+  "name": "GEMINI 2.1 - By Abul Rafae",
+  "short_name": "GEMINI 2.1",
+  "description": "GEMINI 2.1 - Best AI Assistant by Abul Rafae. Supports all languages.",
+  "start_url": "/GEMINI.2.1/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#00f2fe",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/4712/4712109.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/4712/4712109.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
