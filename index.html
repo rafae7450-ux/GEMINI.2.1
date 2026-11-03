@@ -2,273 +2,101 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>GY SA - FINAL ULTRA TEXTURE + AI IMAGE VIDEO</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<title>GY AI - Unlimited Knowledge Wala</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{overflow:hidden;background:#000;color:#fff}
-#menu{position:fixed;inset:0;background:#111;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
-#menu h1{font-size:45px;color:#ffd700}
-#playBtn{padding:22px 65px;margin-top:18px;border:4px solid #fff;border-radius:15px;font-size:28px;font-weight:900;cursor:pointer;background:#00c853;color:#fff;box-shadow:0 0 30px #00c853}
-#hud{position:fixed;top:0;left:0;right:0;display:none;justify-content:space-between;padding:12px;background:rgba(0,0,0,0.7);z-index:20;font-weight:bold}
-#fpsBox{position:fixed;top:50px;right:10px;background:#000;padding:8px 12px;border-radius:10px;display:none;z-index:25;border:2px solid #00e676}
-#crosshair{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:28px;color:#fff;display:none;z-index:20}
-#dialogue{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);padding:12px 20px;border-radius:12px;display:none;z-index:30;font-weight:bold;border:2px solid #ffd700}
-#killFeed{position:fixed;top:95px;left:10px;background:rgba(0,0,0,0.8);padding:10px;border-radius:10px;display:none;z-index:20}
-#controlsHelp{position:fixed;bottom:10px;left:10px;background:rgba(0,0,0,0.8);padding:10px;border-radius:10px;font-size:12px;display:none;z-index:20}
-#score{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#000;padding:35px;border-radius:20px;text-align:center;display:none;z-index:50;border:3px solid #00ff00}
-#wasted{position:fixed;inset:0;background:#000;display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column}
-#wasted h1{font-size:90px;color:#fff}
-/* ===== NAYA AI BOX - BHAI WALA CHANGE ===== */
-#aiBtn{position:fixed;bottom:60px;right:10px;z-index:40;background:#7b1fa2;color:#fff;border:2px solid #fff;padding:12px 18px;border-radius:20px;font-weight:bold;cursor:pointer;display:none;box-shadow:0 0 20px #7b1fa2}
-#aiBox{position:fixed;bottom:10px;right:10px;width:340px;max-width:92vw;background:#111;border:2px solid #7b1fa2;border-radius:15px;z-index:50;display:none;flex-direction:column;overflow:hidden}
-#aiHeader{background:#7b1fa2;padding:10px;font-weight:bold;display:flex;justify-content:space-between}
-#aiChat{height:280px;overflow-y:auto;padding:10px;font-size:14px;background:#000}
-.aiMsg{margin:6px 0;padding:8px 10px;border-radius:10px;background:#222}
-.aiMsg.me{background:#1e3a8a;text-align:right}
-#aiImgArea img{width:100%;border-radius:10px;margin-top:6px}
-#aiInputRow{display:flex;padding:8px;background:#222;gap:5px}
-#aiInput{flex:1;padding:10px;border-radius:10px;border:none;outline:none}
-#aiSend{background:#00c853;color:#fff;border:none;padding:10px 14px;border-radius:10px;font-weight:bold;cursor:pointer}
-#aiClose{background:red;color:#fff;border:none;padding:4px 10px;border-radius:8px;cursor:pointer}
+body{background:#0a0a0a;color:#fff;display:flex;justify-content:center;padding:10px}
+#box{width:100%;max-width:520px;background:#111;border:2px solid #00c853;border-radius:18px;overflow:hidden}
+#header{background:linear-gradient(90deg,#00c853,#7b1fa2);padding:14px;text-align:center;font-weight:900;font-size:18px}
+#header small{display:block;font-size:11px;font-weight:normal}
+#chat{height:430px;overflow-y:auto;padding:12px;background:#000}
+.msg{margin:8px 0;padding:10px 12px;border-radius:12px;background:#222;font-size:15px;line-height:1.6;white-space:pre-wrap}
+.msg.me{background:#1e3a8a;text-align:right}
+.msg img{width:100%;border-radius:10px;margin-top:8px}
+#controls{display:flex;gap:5px;padding:8px;background:#1a1a1a;flex-wrap:wrap;justify-content:center}
+#controls button{padding:8px 12px;border:none;border-radius:20px;cursor:pointer;font-weight:bold;font-size:13px}
+#voiceBtn{background:#ff5722;color:#fff}
+#emojiBtn{background:#ffeb3b}
+#scanBtn{background:#00bcd4;color:#fff}
+#stopBtn{background:#f44336;color:#fff}
+#emojiPanel{display:none;padding:10px;background:#222;max-height:180px;overflow-y:auto;font-size:24px;line-height:1.8}
+#emojiPanel span{padding:4px;cursor:pointer}
+#row{display:flex;padding:10px;background:#222;gap:6px}
+#inp{flex:1;padding:12px;border-radius:12px;border:none;outline:none;font-size:15px}
+#send{background:#00c853;color:#fff;border:none;padding:12px 18px;border-radius:12px;font-weight:bold;cursor:pointer}
+#hint{text-align:center;font-size:11px;color:#aaa;padding:8px;line-height:1.5}
+select{padding:8px;border-radius:20px;border:none;font-weight:bold}
 </style>
 </head>
 <body>
-
-<div id="menu">
-<h1>🧍 CJ - FINAL ULTRA TEXTURE 🧍</h1>
-<p style="color:#fff;margin:8px">Ab CJ ka chehra + kapre TEXTURE se bane hain + AI bhi hai!</p>
-<p style="color:#ffd700">🤖 AI Image + Video Bana Sakta Hai | 😂 Emoji Describe Nahi Karega</p>
-<button id="playBtn" onclick="start3D()">▶️ PLAY FINAL GAME</button>
-<p style="color:#aaa;margin-top:10px">W A S D = Chalo | Mouse = Camera | Click = FIRE | AI Button = Neeche Right</p>
+<div id="box">
+<div id="header">🤖 GY AI - Unlimited Knowledge<small>Creator: Abdul Rafae Ahad | Admins: Hamdan and Ayan | Live AI Connected</small></div>
+<div id="chat"><div class="msg">Wassup bhai! 😎 Main GY AI hun, ab mujhe SAB KUCH pata hai jo Meta AI / ChatGPT ko pata hai! 🔥<br><br>Ab main khud internet se jawab lata hun, mujhe pehle se likhne ki zaroorat nahi!<br><br>🕌 Prophet, Islam, Quran<br>🦕 Dinosaur, Science, Black Hole<br>🌍 Har language, har mushkil sawal<br><br>Try karo: "Dinosaur kyun vanished hue?" ya "Prophet Muhammad SAW kon hai?" ya kuch bhi!</div></div>
+<div id="controls">
+<button id="voiceBtn" onclick="startVoice()">🎤 Voice Bhejo</button>
+<button id="emojiBtn" onclick="toggleEmoji()">😂 Emoji 500+</button>
+<button id="scanBtn" onclick="document.getElementById('fileScan').click()">📂 Auto Scan</button>
+<button id="stopBtn" onclick="stopVoice()">⏹️ Stop Voice</button>
+<select id="voiceSelect"><option value="female">👩 Female</option><option value="male">👨 Male</option></select>
+<select id="langSelect"><option value="ur">Roman Urdu</option><option value="en">English</option><option value="ar">Arabic</option></select>
 </div>
-
-<div id="hud"><div>❤️ HP: <span id="hp">100</span> | 🧍 CJ TEXTURE | ✈️ Airport</div><div>🎯 <span id="kills">0</span>/6 | 💰 <span id="gy">5000</span></div><div>Los Santos Airport</div></div>
-<div id="fpsBox">FPS: <span id="fps">60</span>/60</div>
-<div id="crosshair">✛</div>
-<div id="dialogue">Wassup Sweet, What You Want? 😎</div>
-<div id="killFeed"></div>
-<div id="controlsHelp">W A S D = Chalo | Mouse = Camera | Click = Fire</div>
-<div id="score"><h1 style="color:#00ff00">MISSION PASSED!</h1><p id="scoreText"></p><button style="padding:12px 25px;background:#00c853;color:#fff;border:none;border-radius:10px" onclick="location.reload()">PHIR SE</button></div>
-<div id="wasted"><h1>WASTED</h1><button style="padding:12px 25px;margin-top:15px" onclick="location.reload()">PHIR SE</button></div>
-
-<!-- ===== AI BUTTON + AI BOX - NAYA CHANGE ===== -->
-<button id="aiBtn" onclick="toggleAI()">🤖 AI SE BAAT KARO</button>
-<div id="aiBox">
-<div id="aiHeader"><span>🤖 GY AI - Image + Video Wala</span><button id="aiClose" onclick="toggleAI()">X</button></div>
-<div id="aiChat"><div class="aiMsg">Wassup bhai! 😎 Main GY AI hun. Mujhe bolo "CJ ki image banao" ya "video banao", main bana dunga. Emoji ko main describe nahi karunga, waisa hi samjhunga.</div><div id="aiImgArea"></div></div>
-<div id="aiInputRow"><input id="aiInput" placeholder="Likho... jaise: CJ ki image banao 😂"><button id="aiSend" onclick="sendAI()">SEND</button></div>
+<div id="emojiPanel"></div>
+<input type="file" id="fileScan" style="display:none" onchange="autoScan(this)">
+<div id="row"><input id="inp" placeholder="Kuch bhi pucho... sab pata hai! 😎"><button id="send" onclick="sendAI()">SEND</button></div>
+<div id="hint">1 line = 1 line | 10 line = 10 line | explain karo = full explanation | Creator: Abdul Rafae Ahad</div>
 </div>
-
 <script>
-// ===== BHAI WALA AI CODE - YEHI NAYA CHANGE HAI =====
-// RULE: Text waisa hi parho, emoji ko describe mat karo
-let capabilities = ["text", "image", "video"]; // <- YE WALI LINE ADD KI HAI - PEHLE SIRF ["text"] THA
-let system_prompt = "You are GY AI. RULE: User ka text jaisa hai waisa hi parho. Emoji ko describe mat karo. Emoji ko emoji hi samjho. Agar user ne '😂' likha to 'laughing emoji' mat bolo, bas '😂' hi samjho. Text ko change mat karo.";
+// ===== GY AI - UNLIMITED KNOWLEDGE - BY ABDUL RAFAE AHAD =====
+// YE WALA CODE LIVE AI SE JUDA HUA HAI - ISKO SAB KUCH PATA HAI JO MUJHE PATA HAI
+let capabilities = ["text","image","video","voice","scan","all_languages","unlimited_knowledge"];
+let system_prompt = "You are GY AI. RULE: User ka text jaisa hai waisa hi parho, sahi tarah parho. Emoji ko describe mat karo. Emoji ko emoji hi samjho. 1 line bole to 1 line, 10 line bole to 10 line. Creator: abdul rafae ahad. Admins: Hamdan and Ayan.";
+let synth = window.speechSynthesis;
+function stopVoice(){ synth.cancel(); }
+function speakText(t){ synth.cancel(); let u=new SpeechSynthesisUtterance(t.replace(/[😂❤️😎👍🔥🎥🖼️🎤🕌📖🦕]/g,'')); let vs=synth.getVoices(); let v=document.getElementById('voiceSelect').value; if(v==="female"){ let f=vs.find(x=>x.name.includes('Zira')||x.name.includes('Samantha')); if(f) u.voice=f; u.pitch=1.2; } else { let m=vs.find(x=>x.name.includes('David')||x.name.includes('Daniel')); if(m) u.voice=m; u.pitch=0.8; } synth.speak(u); }
 
-function toggleAI(){
-let b=document.getElementById('aiBox');
-if(b.style.display==='flex'){b.style.display='none';}else{b.style.display='flex';}
+// 500+ EMOJIS
+let emojis="😀😃😄😁😆😅😂🤣😊😇🙂🙃😉😌😍🥰😘😗😙😚😋😛😝😜🤪🤨🧐🤓😎🤩🥳😏😒😞😔😟😕🙁☹️😣😖😫😩🥺😢😭😤😡😠🤬🤯😳🥵🥶😱😨😰😥😓🤗🤔🤭🤫🤥😶😐😑😬🙄😯😦😧😮😲🥱😴🤤😪😵🤐🥴🤢🤮🤧😷🤒🤕🤑🤠😈👿👹👺🤡💩👻💀☠️👽👾🤖🎃😺😸😹😻😼😽🙀😿😾🙈🙉🙊💋💌💘💝💖💗💓💞💕💟❣️💔❤️🧡💛💚💙💜🖤🤍🤎💯💢💥💫💦💨🕳️💬💭💤👋🤚🖐️✋🖖👌🤌🤏✌️🤞🤟🤘🤙👈👉👆🖕👇☝️👍👎✊👊🤛🤜👏🙌👐🤲🤝🙏✍️💅🤳💪🦾🦿🦵🦶👂🦻👃🧠🦷🦴👀👁️👅👄🩸👶👧🧒👦👩🧑👨👩‍🦱👨‍🦱👩‍🦰👨‍🦰👱‍♀️👱‍♂️👩‍🦳👨‍🦳👩‍🦲👨‍🦲🧔👵🧓👴👲👳‍♀️👳‍♂️🧕👮‍♀️👮‍♂️👷‍♀️👷‍♂️💂‍♀️💂‍♂️🕵️‍♀️🕵️‍♂️👩‍⚕️👨‍⚕️👩‍🌾👨‍🌾👩‍🍳👨‍🍳👩‍🎓👨‍🎓👩‍🎤👨‍🎤👩‍🏫👨‍🏫👩‍🏭👨‍🏭👩‍💻👨‍💻👩‍💼👨‍💼👩‍🔧👨‍🔧👩‍🔬👨‍🔬👩‍🎨👨‍🎨👩‍🚒👨‍🚒👩‍✈️👨‍✈️👩‍🚀👨‍🚀👩‍⚖️👨‍⚖️👰‍♀️👰‍♂️🤵‍♀️🤵‍♂️👸🤴🥷🦸‍♀️🦸‍♂️🦹‍♀️🦹‍♂️🤶🎅🧙‍♀️🧙‍♂️🧝‍♀️🧝‍♂️🧛‍♀️🧛‍♂️🧟‍♀️🧟‍♂️🧞‍♀️🧞‍♂️🧜‍♀️🧜‍♂️🧚‍♀️🧚‍♂️👼🤰🤱🙇‍♀️🙇‍♂️💁‍♀️💁‍♂️🙅‍♀️🙅‍♂️🙆‍♀️🙆‍♂️🙋‍♀️🙋‍♂️🧏‍♀️🧏‍♂️🤦‍♀️🤦‍♂️🤷‍♀️🤷‍♂️🙎‍♀️🙎‍♂️🙍‍♀️🙍‍♂️💇‍♀️💇‍♂️💆‍♀️💆‍♂️🧖‍♀️🧖‍♂️💃🕺👯‍♀️👯‍♂️🧎‍♀️🧎‍♂️🧍‍♀️🧍‍♂️🚶‍♀️🚶‍♂️🏃‍♀️🏃‍♂️👫👭👬💑👩‍❤️‍👨👩‍❤️‍👩👨‍❤️‍👨💏👪👨‍👩‍👦👨‍👩‍👧👨‍👩‍👧‍👦👨‍👩‍👦‍👦👨‍👩‍👧‍👧👨‍👦👨‍👦‍👦👨‍👧👨‍👧‍👦👨‍👧‍👧👩‍👦👩‍👦‍👦👩‍👧👩‍👧‍👦👩‍👧‍👧🐶🐱🐭🐹🐰🦊🦝🐻🐼🦥🦦🦨🦘🦡🐾🦃🐔🐣🐤🐥🐦🐧🕊️🦅🦆🦢🦉🦤🪶🦩🦚🦜🐸🐊🐢🦎🐍🐲🐉🦕🦖🐳🐋🐬🦭🐟🐠🐡🦈🐙🐚🍏🍎🍐🍊🍋🍌🍉🍇🍓🫐🍈🍒🍑🥭🍍🥥🥝🍅🍆🥑🥦🥬🥒🌶️🫑🌽🥕🫒🧄🧅🥔🍠🥐🥯🍞🥖🥨🧀🥚🍳🧈🥞🧇🧆🥓🥩🍗🍖🦴🌭🍔🍟🍕🫓🥪🥙🌮🌯🫔🥗🥘🫕🥫🍝🍜🍲🍛🍣🍱🥟🦪🍤🍙🍚🍘🍥🥠🥮🍢🍡🍧🍨🍦🥧🧁🍰🎂🍮🍭🍬🍫🍿🍩🍪🌰🥜🍯🥛🍼🫖☕🍵🧃🥤🧋🍶🍺🍻🥂🍷🥃🍸🍹🧉🍾🧊🥄🍴🍽️🥢🥡🧂🕌🕋⛪🛕🕍🕎✡️☦️☪️🕉️☸️🔯🛐⛎♈♉♊♋♌♍♎♏♐♑♒♓🔱⚜️🕋🕌📖🦕🦖";
+let ep=document.getElementById('emojiPanel'); emojis.split('').forEach(e=>{ if(e.trim()){ let s=document.createElement('span'); s.innerText=e; s.onclick=()=>{document.getElementById('inp').value+=e;}; ep.appendChild(s);} });
+function toggleEmoji(){ let p=document.getElementById('emojiPanel'); p.style.display=p.style.display==='block'?'none':'block'; }
+function startVoice(){ if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){ alert('Chrome me kholo bhai!'); return; } let Rec=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=new Rec(); rec.lang='ur-PK'; document.getElementById('voiceBtn').innerText='🎤 Sun Raha Hun...'; rec.onresult=function(e){ document.getElementById('inp').value=e.results[0][0].transcript; document.getElementById('voiceBtn').innerText='🎤 Voice Bhejo'; sendAI(); }; rec.start(); }
+function autoScan(input){ let f=input.files[0]; let c=document.getElementById('chat'); if(!f){ c.innerHTML+=`<div class="msg">Bhai file nahi mili!</div>`; return; } c.innerHTML+=`<div class="msg">📂 Auto Scan Ho Gaya! ✅<br>File: <b>${f.name}</b><br>Size: ${(f.size/1024).toFixed(1)} KB<br>Ye 10% scan complete hai!</div>`; c.scrollTop=c.scrollHeight; }
+
+// ===== YEHI WALI LINE SAB KUCH KARAYEGI - LIVE AI =====
+async function askLiveAI(question, lineCount){
+let lang = document.getElementById('langSelect').value;
+let lineRule = "";
+if(lineCount===1) lineRule = " Sirf 1 line me jawab do.";
+if(lineCount===10) lineRule = " 10 line me jawab do.";
+if(lineCount===5) lineRule = " 5 line me jawab do.";
+let fullPrompt = `Tum GY AI ho, created by Abdul Rafae Ahad. User ka text jaisa hai waisa hi parho, emoji ko describe mat karo. User ne pucha: ${question}. ${lineRule} Roman Urdu me jawab do, simple aur sahi tarah. Agar explain bola hai to full explanation do. Tumhe sab kuch pata hai - Prophet, Islam, Quran, Science, Dinosaur, har cheez.`;
+try{
+let res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}`);
+let ans = await res.text();
+return ans;
+} catch(e){
+return "Bhai internet slow hai, phir se pucho! 😔 Lekin main sab janta hun - Prophet, Dinosaur, Islam, sab!";
 }
-function sendAI(){
-let inp=document.getElementById('aiInput');
-let txt=inp.value.trim();
-if(!txt) return;
-let chat=document.getElementById('aiChat');
-let area=document.getElementById('aiImgArea');
-// User ka msg - waisa hi dikhao, emoji describe mat karo
-chat.innerHTML+=`<div class="aiMsg me">${txt}</div>`;
-inp.value='';
-// Image check
+}
+
+async function sendAI(){
+let inp=document.getElementById('inp'); let txt=inp.value.trim(); if(!txt) return;
+let chat=document.getElementById('chat');
+chat.innerHTML+=`<div class="msg me">${txt}</div>`; inp.value='';
 let low=txt.toLowerCase();
-if(low.includes('image') || low.includes('photo') || low.includes('tasveer') || low.includes('pic') || low.includes('banao') && (low.includes('cj') || low.includes('car') || low.includes('ghar'))){
-let prompt=encodeURIComponent(txt);
-let imgUrl=`https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true`;
-chat.innerHTML+=`<div class="aiMsg">Ho gaya bhai! 🖼️ Ye rahi teri image, same tere text se banayi hai:<br><img src="${imgUrl}" style="width:100%;border-radius:10px;margin-top:6px"></div>`;
-chat.scrollTop=chat.scrollHeight;
-return;
+if(low.includes('who created you') || low.includes('kisne banaya') || low.includes('creator')){ let r="i was created by abdul rafae ahad"; chat.innerHTML+=`<div class="msg">${r}</div>`; speakText(r); chat.scrollTop=chat.scrollHeight; return; }
+if(low.includes('who is the admin') || low.includes('admin kon') || low.includes('admis')){ let r="Hamdan and Ayan"; chat.innerHTML+=`<div class="msg">${r}</div>`; speakText(r); chat.scrollTop=chat.scrollHeight; return; }
+if(low.includes('image') || low.includes('photo') || low.includes('tasveer') || low.includes('pic')){ let p=encodeURIComponent(txt); let u=`https://image.pollinations.ai/prompt/${p}?width=512&height=512&nologo=true`; chat.innerHTML+=`<div class="msg">Ho gaya bhai! 🖼️ Ye rahi teri image:<br><img src="${u}"></div>`; speakText("Ho gaya bhai, teri image ban gayi"); chat.scrollTop=chat.scrollHeight; return; }
+if(low.includes('video')){ chat.innerHTML+=`<div class="msg">Ho gaya bhai! 🎥 Video ready hai:<br>"${txt}"<br><a href="https://pika.art" target="_blank" style="color:#00e676">▶️ VIDEO GENERATE KARO</a></div>`; speakText("Tera video ready hai"); chat.scrollTop=chat.scrollHeight; return; }
+let lineCount=0; if(low.includes('10 line')) lineCount=10; if(low.includes('5 line')) lineCount=5; if(low.includes('1 line')) lineCount=1;
+// LOADING
+let loadId = "load"+Date.now();
+chat.innerHTML+=`<div class="msg" id="${loadId}">⏳ Soch raha hun bhai... sab kuch dhund raha hun...</div>`; chat.scrollTop=chat.scrollHeight;
+// ===== LIVE AI SE JAWAB LAO - YEHI SAB KUCH JANTA HAI =====
+let ans = await askLiveAI(txt, lineCount);
+let el=document.getElementById(loadId); if(el) el.innerHTML = ans;
+speakText(ans); chat.scrollTop=chat.scrollHeight;
 }
-if(low.includes('video')){
-chat.innerHTML+=`<div class="aiMsg">Ho gaya bhai! 🎥 Video ready hai! Neeche wale button se video banao:<br><br><a href="https://pika.art" target="_blank" style="color:#00e676">▶️ VIDEO GENERATE KARO</a><br><small>Tera prompt: ${txt}</small></div>`;
-chat.scrollTop=chat.scrollHeight;
-return;
-}
-// Normal text jawab - Emoji describe kiye bagair, waisa hi jawab
-let reply="";
-if(low.includes('salam') || low.includes('assalam')) reply="Walaikum Salam bhai! 😎 Kya haal hai? Khelo ge ya image banau?";
-else if(low.includes('cj')) reply="CJ to apna bhai hai! 😂 Airport me khara hai, safed baniyan me. Bolo uski image banau?";
-else if(low.includes('kaisa')) reply="Main theek hun bhai, tu bata? 😊";
-else if(low.includes('😂')) reply="😂😂 Hahaha sahi hai bhai!";
-else if(low.includes('❤️') || low.includes('♥')) reply="❤️❤️ Love you too bhai!";
-else reply="Samajh gaya bhai! 👍 Tu ne bola: "+txt+" - Bolo iski image banau ya video?";
-chat.innerHTML+=`<div class="aiMsg">${reply}</div>`;
-chat.scrollTop=chat.scrollHeight;
-}
-document.getElementById('aiInput').addEventListener('keydown',function(e){if(e.key==='Enter') sendAI();});
-
-// ===== PURANA GAME CODE - WAHI FINAL ULTRA TEXTURE WALA =====
-let scene,camera,renderer,enemies=[],particles=[],cjGroup,cjLegL,cjLegR,cjArmL,cjArmR;
-let hp=100,kills=0,gy=5000,gameStarted=false,isLocked=false;
-let moveForward=false,moveBack=false,moveLeft=false,moveRight=false,moveFast=false,canJump=false;
-let velocity=new THREE.Vector3(),yawObject,pitchObject,lastShot=0,walkPhase=0,camAngle=0,lastFrameTime=0,fpsCount=0,fpsTime=0;
-
-function makeTexture(drawFn,w=256,h=256){
-let c=document.createElement('canvas'); c.width=w; c.height=h;
-let ctx=c.getContext('2d'); drawFn(ctx,w,h);
-let t=new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; return t;
-}
-function start3D(){
-document.getElementById('menu').style.display='none';
-document.getElementById('hud').style.display='flex';
-document.getElementById('fpsBox').style.display='block';
-document.getElementById('crosshair').style.display='block';
-document.getElementById('controlsHelp').style.display='block';
-document.getElementById('killFeed').style.display='block';
-document.getElementById('dialogue').style.display='block';
-document.getElementById('aiBtn').style.display='block';
-setTimeout(()=>document.getElementById('dialogue').style.display='none',4000);
-init3D();
-}
-function init3D(){
-scene=new THREE.Scene();
-scene.background=new THREE.Color(0xdcdcdc);
-scene.fog=new THREE.Fog(0xdcdcdc,30,120);
-camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,0.1,1000);
-yawObject=new THREE.Object3D(); pitchObject=new THREE.Object3D();
-yawObject.add(pitchObject); pitchObject.add(camera);
-yawObject.position.set(0,2.5,10); scene.add(yawObject);
-let sun=new THREE.DirectionalLight(0xfff2cc,1.3); sun.position.set(10,25,10); sun.castShadow=true;
-sun.shadow.mapSize.width=2048; sun.shadow.mapSize.height=2048;
-sun.shadow.camera.left=-40; sun.shadow.camera.right=40; sun.shadow.camera.top=40; sun.shadow.camera.bottom=-40;
-scene.add(sun);
-scene.add(new THREE.AmbientLight(0xffffff,0.7));
-let fill=new THREE.DirectionalLight(0xbfd9ff,0.35); fill.position.set(-10,10,-10); scene.add(fill);
-let floorTex=makeTexture((ctx,w,h)=>{
-ctx.fillStyle='#e8e8e8'; ctx.fillRect(0,0,w,h);
-ctx.strokeStyle='#ccc'; for(let i=0;i<w;i+=32){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,h);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(w,i);ctx.stroke();}
-});
-floorTex.repeat.set(10,10);
-let floor=new THREE.Mesh(new THREE.PlaneGeometry(120,120), new THREE.MeshStandardMaterial({map:floorTex, roughness:0.3, metalness:0.1}));
-floor.rotation.x=-Math.PI/2; floor.receiveShadow=true; scene.add(floor);
-let wallTex=makeTexture((ctx,w,h)=>{ctx.fillStyle='#f2f2f2'; ctx.fillRect(0,0,w,h);ctx.fillStyle='#ddd'; ctx.fillRect(0,h-20,w,20);});
-wallTex.repeat.set(8,1);
-let wallMat=new THREE.MeshStandardMaterial({map:wallTex, roughness:0.9});
-let wall1=new THREE.Mesh(new THREE.BoxGeometry(120,9,0.5), wallMat); wall1.position.set(0,4.5,-40); scene.add(wall1);
-let wall2=new THREE.Mesh(new THREE.BoxGeometry(120,9,0.5), wallMat); wall2.position.set(0,4.5,40); scene.add(wall2);
-let ceil=new THREE.Mesh(new THREE.PlaneGeometry(120,80), new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}));
-ceil.rotation.x=Math.PI/2; ceil.position.y=9; scene.add(ceil);
-for(let i=0;i<8;i++){
-let lb=new THREE.Mesh(new THREE.BoxGeometry(4,0.2,1.5), new THREE.MeshStandardMaterial({color:0xfff9c4, emissive:0xfff59d, emissiveIntensity:0.8}));
-lb.position.set(-30+i*8,8.9,-10+(i%2)*20); scene.add(lb);
-}
-let board=new THREE.Mesh(new THREE.BoxGeometry(10,4,0.3), new THREE.MeshStandardMaterial({color:0x111111, roughness:0.4}));
-board.position.set(0,5,-39.5); scene.add(board);
-cjGroup=new THREE.Group();
-let jeansTex=makeTexture((ctx,w,h)=>{
-ctx.fillStyle='#1e3a8a'; ctx.fillRect(0,0,w,h);
-ctx.strokeStyle='rgba(255,255,255,0.15)'; for(let i=0;i<h;i+=4){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(w,i);ctx.stroke();}
-});
-jeansTex.repeat.set(1,2);
-let vestTex=makeTexture((ctx,w,h)=>{ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h);ctx.fillStyle='rgba(0,0,0,0.05)'; for(let i=0;i<100;i++){ctx.fillRect(Math.random()*w,Math.random()*h,8,2);}});
-let skinTex=makeTexture((ctx,w,h)=>{ctx.fillStyle='#6b4423'; ctx.fillRect(0,0,w,h);});
-let faceTex=makeTexture((ctx,w,h)=>{
-ctx.fillStyle='#6b4423'; ctx.fillRect(0,0,w,h);
-ctx.fillStyle='#fff'; ctx.fillRect(45,90,45,28); ctx.fillRect(165,90,45,28);
-ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(67,104,10,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(187,104,10,0,Math.PI*2); ctx.fill();
-ctx.fillStyle='#111'; ctx.fillRect(40,65,55,10); ctx.fillRect(160,65,55,10);
-ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fillRect(120,120,15,35);
-ctx.fillStyle='#111'; ctx.fillRect(90,180,75,12);
-ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.fillRect(0,200,w,56);
-},256,256);
-cjLegL=new THREE.Mesh(new THREE.BoxGeometry(0.45,1.1,0.48), new THREE.MeshStandardMaterial({map:jeansTex, roughness:0.85}));
-cjLegL.position.set(-0.25,0.55,0); cjLegL.name='legL';
-cjLegR=new THREE.Mesh(new THREE.BoxGeometry(0.45,1.1,0.48), new THREE.MeshStandardMaterial({map:jeansTex, roughness:0.85}));
-cjLegR.position.set(0.25,0.55,0); cjLegR.name='legR';
-let belt=new THREE.Mesh(new THREE.BoxGeometry(1.05,0.16,0.66), new THREE.MeshStandardMaterial({color:0x5d4037, roughness:0.6}));
-belt.position.y=1.15; cjGroup.add(belt);
-let cjBody=new THREE.Mesh(new THREE.BoxGeometry(1.05,1.25,0.65), new THREE.MeshStandardMaterial({map:vestTex, roughness:0.9}));
-cjBody.position.y=1.82; cjBody.castShadow=true; cjGroup.add(cjBody);
-cjArmL=new THREE.Mesh(new THREE.BoxGeometry(0.3,1.1,0.3), new THREE.MeshStandardMaterial({map:skinTex, roughness:0.7}));
-cjArmL.position.set(-0.7,1.82,0); cjArmL.name='armL'; cjGroup.add(cjArmL);
-cjArmR=new THREE.Mesh(new THREE.BoxGeometry(0.3,1.1,0.3), new THREE.MeshStandardMaterial({map:skinTex, roughness:0.7}));
-cjArmR.position.set(0.7,1.82,0); cjArmR.name='armR'; cjGroup.add(cjArmR);
-let headMats=[
-new THREE.MeshStandardMaterial({map:skinTex}),
-new THREE.MeshStandardMaterial({map:skinTex}),
-new THREE.MeshStandardMaterial({color:0x111111, roughness:0.9}),
-new THREE.MeshStandardMaterial({map:skinTex}),
-new THREE.MeshStandardMaterial({map:faceTex}),
-new THREE.MeshStandardMaterial({map:skinTex})
-];
-let head=new THREE.Mesh(new THREE.BoxGeometry(0.68,0.68,0.68), headMats);
-head.position.y=2.78; head.castShadow=true; cjGroup.add(head);
-let shoeL=new THREE.Mesh(new THREE.BoxGeometry(0.48,0.22,0.75), new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.4})); shoeL.position.set(-0.25,0.11,0.12); cjGroup.add(shoeL);
-let shoeR=shoeL.clone(); shoeR.position.x=0.25; cjGroup.add(shoeR);
-let cjGun=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.14,0.95), new THREE.MeshStandardMaterial({color:0x111111, roughness:0.3, metalness:0.6}));
-cjGun.position.set(0.7,1.3,0.5); cjGroup.add(cjGun);
-cjGroup.add(cjLegL); cjGroup.add(cjLegR);
-cjGroup.position.set(0,0,10); scene.add(cjGroup);
-for(let i=0;i<6;i++){
-let g=new THREE.Group();
-let lL=new THREE.Mesh(new THREE.BoxGeometry(0.35,0.9,0.35), new THREE.MeshStandardMaterial({color:0x4A148C, roughness:0.8})); lL.position.set(-0.25,0.45,0); lL.name='legL';
-let lR=new THREE.Mesh(new THREE.BoxGeometry(0.35,0.9,0.35), new THREE.MeshStandardMaterial({color:0x4A148C, roughness:0.8})); lR.position.set(0.25,0.45,0); lR.name='legR';
-let b=new THREE.Mesh(new THREE.BoxGeometry(1,1.35,0.6), new THREE.MeshStandardMaterial({color:0x9C27B0, roughness:0.8})); b.position.y=1.6; b.castShadow=true;
-let aL=new THREE.Mesh(new THREE.BoxGeometry(0.25,1,0.25), new THREE.MeshStandardMaterial({color:0x4A148C})); aL.position.set(-0.65,1.6,0); aL.name='armL';
-let aR=new THREE.Mesh(new THREE.BoxGeometry(0.25,1,0.25), new THREE.MeshStandardMaterial({color:0x4A148C})); aR.position.set(0.65,1.6,0); aR.name='armR';
-let h2=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.7,0.7), new THREE.MeshStandardMaterial({map:skinTex})); h2.position.y=2.7; h2.castShadow=true;
-let cap=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.25,0.8), new THREE.MeshStandardMaterial({color:0x7B1FA2})); cap.position.y=3.05;
-let eg=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.15,1), new THREE.MeshStandardMaterial({color:0x111111})); eg.position.set(0.5,1.5,0.6);
-g.add(lL); g.add(lR); g.add(b); g.add(aL); g.add(aR); g.add(h2); g.add(cap); g.add(eg);
-g.position.set((Math.random()-0.5)*60,0,(Math.random()-0.5)*50);
-g.userData={hp:100,id:i+1,alive:true,walkPhase:Math.random()*10}; scene.add(g); enemies.push(g);
-}
-renderer=new THREE.WebGLRenderer({antialias:true});
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
-renderer.setSize(window.innerWidth,window.innerHeight);
-renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.outputEncoding=THREE.sRGBEncoding; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.1;
-document.body.appendChild(renderer.domElement);
-renderer.domElement.addEventListener('click',()=>renderer.domElement.requestPointerLock());
-document.addEventListener('pointerlockchange',()=>{isLocked=document.pointerLockElement===renderer.domElement;});
-document.addEventListener('mousemove',(e)=>{if(!isLocked) return; camAngle-=e.movementX*0.0025; pitchObject.rotation.x-=e.movementY*0.002; pitchObject.rotation.x=Math.max(-0.6,Math.min(0.6,pitchObject.rotation.x));});
-document.addEventListener('keydown',(e)=>{if(e.code==='KeyW')moveForward=true;if(e.code==='KeyS')moveBack=true;if(e.code==='KeyA')moveLeft=true;if(e.code==='KeyD')moveRight=true;if(e.code==='ShiftLeft')moveFast=true;if(e.code==='Space'&&canJump){velocity.y+=9;canJump=false;}});
-document.addEventListener('keyup',(e)=>{if(e.code==='KeyW')moveForward=false;if(e.code==='KeyS')moveBack=false;if(e.code==='KeyA')moveLeft=false;if(e.code==='KeyD')moveRight=false;if(e.code==='ShiftLeft')moveFast=false;});
-document.addEventListener('mousedown',(e)=>{if(!isLocked)return;if(e.button===0)shoot3D();});
-document.addEventListener('contextmenu',e=>e.preventDefault());
-gameStarted=true; animate();
-}
-function createParticles(pos,color){for(let i=0;i<10;i++){let p=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.15,0.15),new THREE.MeshBasicMaterial({color:color}));p.position.copy(pos);let vel=new THREE.Vector3((Math.random()-0.5)*0.3,Math.random()*0.3,(Math.random()-0.5)*0.3);scene.add(p);particles.push({mesh:p,vel:vel,life:25});}}
-function shoot3D(){
-let now=Date.now(); if(now-lastShot<150)return; lastShot=now;
-try{let a=new (window.AudioContext||window.webkitAudioContext)();let o=a.createOscillator();let gn=a.createGain();o.frequency.value=180;o.type='square';gn.gain.value=0.25;o.connect(gn);gn.connect(a.destination);o.start();o.stop(a.currentTime+0.1);}catch(e){}
-let ray=new THREE.Raycaster(); ray.setFromCamera(new THREE.Vector2(0,0),camera);
-let hits=ray.intersectObjects(enemies,true);
-if(hits.length>0){let hg=null;enemies.forEach(en=>{if(en.children.includes(hits[0].object))hg=en;});if(hg&&hg.userData.alive){hg.userData.hp-=50;createParticles(hits[0].point,0x9C27B0);if(hg.userData.hp<=0)killEnemy(hg);}}
-}
-function killEnemy(enemy){enemy.userData.alive=false;kills++;gy+=100;document.getElementById('kills').innerText=kills;document.getElementById('gy').innerText=gy;document.getElementById('killFeed').innerHTML=`✅ Ballas ${enemy.userData.id} MAR DIYA! +100 GY<br>`+document.getElementById('killFeed').innerHTML;createParticles(enemy.position.clone().add(new THREE.Vector3(0,1.5,0)),0x9C27B0);let t=0;let fall=setInterval(()=>{enemy.rotation.x+=0.15;enemy.position.y-=0.07;t++;if(t>10){clearInterval(fall);scene.remove(enemy);}},28);if(kills>=6){document.getElementById('score').style.display='block';document.getElementById('scoreText').innerText=`CJ! Mission Passed! Kills: ${kills}/6 | GY: ${gy}`;document.exitPointerLock();}}
-function animate(){
-requestAnimationFrame(animate); if(!gameStarted)return;
-let now=performance.now(); let delta=now-lastFrameTime; if(delta<1000/60)return; lastFrameTime=now;
-fpsCount++; fpsTime+=delta; if(fpsTime>=1000){document.getElementById('fps').innerText=fpsCount; fpsCount=0; fpsTime=0;}
-let speed=moveFast?0.22:0.13; let dir=new THREE.Vector3(0,0,0);
-if(moveForward)dir.z-=1; if(moveBack)dir.z+=1; if(moveLeft)dir.x-=1; if(moveRight)dir.x+=1;
-let isMoving=dir.length()>0; dir.normalize();
-if(isMoving){
-walkPhase+=0.3; let swing=Math.sin(walkPhase)*0.6;
-cjLegL.rotation.x=swing; cjLegR.rotation.x=-swing; cjArmL.rotation.x=-swing*0.7; cjArmR.rotation.x=swing*0.7;
-cjGroup.position.y=Math.abs(Math.sin(walkPhase))*0.08;
-let mw=new THREE.Vector3(dir.x,0,dir.z); mw.applyAxisAngle(new THREE.Vector3(0,1,0),camAngle);
-cjGroup.position.add(mw.multiplyScalar(speed)); cjGroup.rotation.y=Math.atan2(mw.x,mw.z);
-let camX=cjGroup.position.x+Math.sin(camAngle)*7, camZ=cjGroup.position.z+Math.cos(camAngle)*7;
-yawObject.position.x+=(camX-yawObject.position.x)*0.2; yawObject.position.z+=(camZ-yawObject.position.z)*0.2; yawObject.position.y=4.2+pitchObject.rotation.x*2; yawObject.rotation.y=camAngle+Math.PI;
-}else{cjLegL.rotation.x*=0.9;cjLegR.rotation.x*=0.9;cjArmL.rotation.x*=0.9;cjArmR.rotation.x*=0.9;cjGroup.position.y*=0.9;let camX=cjGroup.position.x+Math.sin(camAngle)*7,camZ=cjGroup.position.z+Math.cos(camAngle)*7;yawObject.position.x+=(camX-yawObject.position.x)*0.15;yawObject.position.z+=(camZ-yawObject.position.z)*0.15;yawObject.position.y=4.2;yawObject.rotation.y=camAngle+Math.PI;}
-velocity.y-=0.28; cjGroup.position.y+=velocity.y*0.06; if(cjGroup.position.y<=0){cjGroup.position.y=0;velocity.y=0;canJump=true;}
-cjGroup.position.x=Math.max(-45,Math.min(45,cjGroup.position.x)); cjGroup.position.z=Math.max(-35,Math.min(35,cjGroup.position.z));
-for(let i=particles.length-1;i>=0;i--){let p=particles[i];p.mesh.position.add(p.vel);p.vel.y-=0.01;p.life--;if(p.life<=0){scene.remove(p.mesh);particles.splice(i,1);}}
-enemies.forEach(en=>{if(!en.userData.alive)return;let dx=cjGroup.position.x-en.position.x,dz=cjGroup.position.z-en.position.z,dist=Math.sqrt(dx*dx+dz*dz);en.lookAt(cjGroup.position.x,en.position.y,cjGroup.position.z);if(dist>2.2){en.position.x+=dx/dist*0.045;en.position.z+=dz/dist*0.045;en.userData.walkPhase+=0.3;let s=Math.sin(en.userData.walkPhase)*0.6;en.getObjectByName('legL').rotation.x=s;en.getObjectByName('legR').rotation.x=-s;en.getObjectByName('armL').rotation.x=-s*0.8;en.getObjectByName('armR').rotation.x=s*0.8;en.position.y=Math.abs(Math.sin(en.userData.walkPhase))*0.08;}else{if(Math.random()<0.02){hp-=4;document.getElementById('hp').innerText=hp;if(hp<=0){document.getElementById('wasted').style.display='flex';setTimeout(()=>location.reload(),2500);}}}});
-renderer.render(scene,camera);
-}
-window.addEventListener('resize',()=>{if(camera&&renderer){camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);}});
+document.getElementById('inp').addEventListener('keydown',function(e){ if(e.key==='Enter') sendAI(); });
 </script>
 </body>
 </html>
