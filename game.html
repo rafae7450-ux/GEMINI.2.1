@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SHADOW OPS</title>
+<style>
+body{margin:0;background:#000;color:#fff;font-family:Arial;overflow:hidden}
+#lobby{position:fixed;inset:0;background:radial-gradient(circle at 50% 20%,#1a1a2e,#000 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;text-align:center}
+#lobby h1{font-size:80px;margin:0;letter-spacing:5px;color:#fff;text-shadow:0 10px 0 #000,0 20px 40px #000,0 0 50px #ff0040,0 0 100px #ff0040}
+#lobby h2{font-size:28px;margin:5px 0 20px;color:#ffcc00;text-shadow:0 5px 0 #000,0 10px 20px #000;letter-spacing:8px}
+select{padding:12px;width:280px;font-size:16px;margin:6px;border-radius:10px;background:#222;color:#fff}
+button{padding:16px 60px;font-size:22px;background:linear-gradient(90deg,#ff0040,#ff7a00);color:#fff;border:none;border-radius:30px;margin-top:20px;font-weight:bold;cursor:pointer}
+#hud{position:fixed;top:15px;left:15px;right:15px;display:none;justify-content:space-between;z-index:10}
+.hud-box{background:rgba(0,0,0,.7);padding:10px 15px;border-radius:10px;border:1px solid #555}
+#crosshair{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:30px;display:none;z-index:10}
+#controls{position:fixed;bottom:15px;left:15px;background:rgba(0,0,0,.7);padding:10px;border-radius:10px;display:none;z-index:10;font-size:13px}
+</style>
+</head>
+<body>
+<div id="lobby">
+<h1>SHADOW OPS</h1>
+<h2>BATTLE ROYALE</h2>
+<p>LAPTOP ONLY - 10 Maps - 100 Guns - HD Graphics</p>
+<select id="mapSelect"></select><select id="gunSelect"></select><select id="skinSelect"></select>
+<button onclick="startGame()">PLAY NOW</button>
+<p>WASD Move | Mouse Look | Click Shoot | V Camera | R Reload | Shift Run</p>
+</div>
+<div id="hud"><div class="hud-box">Health: <b id="health">100</b> | Gun: <span id="gunName">AK-47</span> | Map: <span id="mapName2">Desert</span></div><div class="hud-box" id="mode">SHADOW OPS - 3rd Person</div><div class="hud-box">Ammo: <b id="ammo">30</b> | Kills: <b id="kills">0</b></div></div>
+<div id="crosshair">+</div>
+<div id="controls">W A S D = Move | Mouse = Aim | Click = Shoot | V = 1st/3rd | R = Reload | Shift = Run</div>
+<script type="module">
+import * as THREE from 'https://cdn.skypack.dev/three@0.128.0';
+const MAPS=[{name:"Desert",sky:0x87CEEB,fog:0xE6C229,ground:0xC2A15A},{name:"City",sky:0x87CEEB,fog:0xaaaaaa,ground:0x333333},{name:"Snow Mountain",sky:0xBFEFFF,fog:0xffffff,ground:0xffffff},{name:"Forest",sky:0x7ec850,fog:0x2d5a2d,ground:0x1e4d1e},{name:"Warehouse",sky:0x222222,fog:0x111111,ground:0x444444},{name:"Island",sky:0x00c3ff,fog:0x00aaff,ground:0xE8D8A0},{name:"Factory",sky:0x999999,fog:0x666666,ground:0x555555},{name:"Jungle",sky:0x2f6b2f,fog:0x0a3d0a,ground:0x145a14},{name:"Military Base",sky:0x87CEEB,fog:0x8a8a5a,ground:0x6b6b3a},{name:"Night City",sky:0x0a0a2a,fog:0x0a0a2a,ground:0x111122}];
+const GUNS=["AK-47","M4A1","AWP","UMP","Desert Eagle","Shotgun M1014","SCAR","Groza","FAMAS","AUG","M16","AKM","M762","G36C","M14","P90","Vector","MP5","MP40","Thompson","UZI","Bizon","VSS","Kar98k","M24","AWM","Win94","SKS","SLR","Mk14","Dragunov","M249","Negev","DP-28","M60","RPK","PKM","MG3","M1014","SPAS12","Double Barrel","M1887","MAG-7","M500","Desert Eagle Gold","USP","Glock 18","P92","Deagle","R1895","P1911","M9","44 Magnum","Flare Gun","Crossbow","Bow","Grenade Launcher","RPG","M79","M32","Flamethrower","Minigun","Railgun","Laser Rifle","Plasma Gun","AK-47 Fire","AK-47 Ice","M4A1 Gold","SCAR Titan","Groza Inferno","AWP Dragon","UMP Booyah","MP40 Cobra","Thompson Platinum","AKM Dragon","M1014 Demonic","Desert Eagle Blaze","FAMAS Hellfire","AUG Cyber","M14 Rage","P90 Flash","Vector Lava","Kar98k Imperial","M24 Toxic","AWM Duke","SKS Urban","SVD","M249 Winter","Negev Volcano","DP-28 Jungle","M1887 One Punch","USP 2","Glock Ice","AK-47 Beast","M4A1 Beast","AWP Beast","UMP Beast","Shotgun Beast","AK-74","AN94","QBZ","Kord","L86","AK-47 Max","M4A1 Max"];
+const SKINS=["Default","Fire","Ice","Gold","Diamond","Toxic","Lava","Cobra","Dragon","Neon"];
+const mapSel=document.getElementById('mapSelect'),gunSel=document.getElementById('gunSelect'),skinSel=document.getElementById('skinSelect');
+MAPS.forEach(m=>{let o=document.createElement('option');o.text=m.name;mapSel.add(o)}); GUNS.forEach(g=>{let o=document.createElement('option');o.text=g;gunSel.add(o)}); SKINS.forEach(s=>{let o=document.createElement('option');o.text=s;skinSel.add(o)});
+let scene,camera,renderer,player,gunMesh,enemies=[],bullets=[],isFirst=false,keys={},ammo=30,kills=0,yaw=0;
+let skinColors={Default:0x222222,Fire:0xff3300,Ice:0x00ccff,Gold:0xffd700,Diamond:0x00ffff,Toxic:0x00ff00,Lava:0xff4400,Cobra:0x00aa00,Dragon:0x8800ff,Neon:0xff00ff};
+window.startGame=()=>{document.getElementById('lobby').style.display='none';document.getElementById('hud').style.display='flex';document.getElementById('crosshair').style.display='block';document.getElementById('controls').style.display='block';document.getElementById('gunName').innerText=gunSel.value;document.getElementById('mapName2').innerText=mapSel.value;document.body.requestPointerLock();init();};
+function init(){
+ const map=MAPS.find(m=>m.name==mapSel.value); scene=new THREE.Scene(); scene.background=new THREE.Color(map.sky); scene.fog=new THREE.Fog(map.fog,25,110);
+ camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000); renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setSize(innerWidth,innerHeight); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; document.body.appendChild(renderer.domElement);
+ let sun=new THREE.DirectionalLight(0xffffff,1.3); sun.position.set(30,60,20); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.left=-70; sun.shadow.camera.right=70; sun.shadow.camera.top=70; sun.shadow.camera.bottom=-70; scene.add(sun); scene.add(new THREE.HemisphereLight(0xbfdfff,0x332211,1));
+ let ground=new THREE.Mesh(new THREE.PlaneGeometry(250,250),new THREE.MeshStandardMaterial({color:map.ground})); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+ let road=new THREE.Mesh(new THREE.PlaneGeometry(12,250),new THREE.MeshStandardMaterial({color:0x1a1a1a})); road.rotation.x=-Math.PI/2; road.position.y=0.02; scene.add(road);
+ for(let i=0;i<16;i++){let h=5+Math.random()*12;let b=new THREE.Mesh(new THREE.BoxGeometry(7+Math.random()*5,h,7),new THREE.MeshStandardMaterial({color:[0x888888,0xaa5555,0x5577aa,0x8a6d3b][i%4]}));b.position.set(-35+Math.random()*70,h/2,-35+Math.random()*70);b.castShadow=true;b.receiveShadow=true;scene.add(b);}
+ for(let i=0;i<20;i++){let trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.4,2.5,8),new THREE.MeshStandardMaterial({color:0x5a3a1a}));trunk.position.set(-45+Math.random()*90,1.25,-45+Math.random()*90);trunk.castShadow=true;scene.add(trunk);let leaves=new THREE.Mesh(new THREE.SphereGeometry(1.8,10,10),new THREE.MeshStandardMaterial({color:0x0a7a0a}));leaves.position.set(trunk.position.x,3.5,trunk.position.z);leaves.castShadow=true;scene.add(leaves);}
+ player=new THREE.Group(); let body=new THREE.Mesh(new THREE.BoxGeometry(0.9,1.3,0.5),new THREE.MeshStandardMaterial({color:0x1a3a5a})); body.position.y=1; body.castShadow=true; player.add(body); let head=new THREE.Mesh(new THREE.SphereGeometry(0.38,16,16),new THREE.MeshStandardMaterial({color:0xffccaa})); head.position.y=2; head.castShadow=true; player.add(head);
+ let gunColor=skinColors[skinSel.value]||0x222222; gunMesh=new THREE.Group(); let gunBody=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.28,1.3),new THREE.MeshStandardMaterial({color:gunColor,metalness:0.8,roughness:0.2})); gunBody.position.set(0.55,1.2,0.9); gunMesh.add(gunBody); let barrel=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.8),new THREE.MeshStandardMaterial({color:0x111111,metalness:0.9})); barrel.rotation.x=Math.PI/2; barrel.position.set(0.55,1.25,1.8); gunMesh.add(barrel); player.add(gunMesh); scene.add(player);
+ for(let i=0;i<8;i++){let e=new THREE.Group();let eb=new THREE.Mesh(new THREE.BoxGeometry(0.9,1.4,0.5),new THREE.MeshStandardMaterial({color:0xcc0000}));eb.position.y=1;e.add(eb);let eh=new THREE.Mesh(new THREE.SphereGeometry(0.38,10,10),new THREE.MeshStandardMaterial({color:0x331111}));eh.position.y=2;e.add(eh);e.position.set(-30+Math.random()*60,0,-30+Math.random()*60);scene.add(e);enemies.push(e);}
+ animate();
+}
+function shoot(){if(ammo<=0){ammo=30;document.getElementById('ammo').innerText=ammo;return;}ammo--;document.getElementById('ammo').innerText=ammo;let b=new THREE.Mesh(new THREE.SphereGeometry(0.15,8,8),new THREE.MeshBasicMaterial({color:0xffff00}));b.position.copy(player.position);b.position.y=1.4;b.position.z-=1;scene.add(b);bullets.push(b);enemies.forEach((e,idx)=>{if(e.position.distanceTo(player.position)<25){kills++;document.getElementById('kills').innerText=kills;scene.remove(e);enemies.splice(idx,1);}});setTimeout(()=>scene.remove(b),800);}
+window.addEventListener('mousedown',()=>{if(document.getElementById('lobby').style.display=='none') shoot();});
+window.addEventListener('mousemove',e=>{if(document.pointerLockElement){yaw-=e.movementX*0.002;player.rotation.y=yaw;}});
+function animate(){requestAnimationFrame(animate);let speed=keys['Shift']?0.22:0.13;let fwd=new THREE.Vector3(0,0,-1).applyQuaternion(player.quaternion);let right=new THREE.Vector3(1,0,0).applyQuaternion(player.quaternion);if(keys['w']||keys['W'])player.position.addScaledVector(fwd,speed);if(keys['s']||keys['S'])player.position.addScaledVector(fwd,-speed);if(keys['a']||keys['A'])player.position.addScaledVector(right,-speed);if(keys['d']||keys['D'])player.position.addScaledVector(right,speed);enemies.forEach(e=>{let dir=new THREE.Vector3().subVectors(player.position,e.position).normalize();e.position.addScaledVector(dir,0.025);e.lookAt(player.position);});bullets.forEach(b=>{b.position.addScaledVector(fwd,0.8);});if(isFirst){camera.position.set(player.position.x,player.position.y+1.8,player.position.z+0.3);camera.lookAt(player.position.x+Math.sin(yaw)*-10,player.position.y+1.5,player.position.z+Math.cos(yaw)*-10);}else{camera.position.set(player.position.x,player.position.y+4.5,player.position.z+9);camera.lookAt(player.position);}renderer.render(scene,camera);}
+window.addEventListener('keydown',e=>{keys[e.key]=true;if(e.key.toLowerCase()=='v'){isFirst=!isFirst;document.getElementById('mode').innerText=isFirst?'SHADOW OPS - 1st Person':'SHADOW OPS - 3rd Person';}if(e.key.toLowerCase()=='r'){ammo=30;document.getElementById('ammo').innerText=ammo;}});
+window.addEventListener('keyup',e=>{keys[e.key]=false;});
+</script>
+</body>
+</html>
