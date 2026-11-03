@@ -3,120 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GEMINI 2.1 - By Abul Rafae</title>
+<title>GEMINI 2.1</title>
 <style>
-body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:15px}
-h1{color:#00f0ff;text-shadow:0 0 15px #00f0ff}
-.card{background:#111;border:1px solid #00f0ff;border-radius:15px;padding:15px;max-width:700px;margin:15px auto}
-input{width:70%;padding:12px;border-radius:10px;border:none}
-button{background:#00f0ff;color:#000;padding:10px 18px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;margin:3px}
-#chat{text-align:left;white-space:pre-wrap;background:#1a1a1a;padding:15px;border-radius:10px;min-height:200px;max-height:500px;overflow-y:auto}
-#chat img{max-width:100%;border-radius:10px;margin-top:10px;border:1px solid #00f0ff}
+body{background:#0a0a0a;color:white;font-family:Arial;margin:0;padding:10px}
+h1{color:#00e5ff;text-align:center}
+#chat{background:#111;border:2px solid #00e5ff;border-radius:15px;padding:15px;height:400px;overflow-y:auto;margin-bottom:10px}
+.you{color:#00e5ff;margin:10px 0}
+.ai{color:white;margin:10px 0;background:#222;padding:10px;border-radius:10px}
+#box{display:flex;gap:5px}
+input{flex:1;padding:12px;border-radius:10px;border:none;font-size:16px}
+button{padding:12px 15px;border:none;border-radius:10px;background:#00e5ff;font-size:18px;cursor:pointer}
+#mic{background:#ff4081}
 </style>
 </head>
 <body>
 <h1>GEMINI 2.1 🚀</h1>
-<p>Powered by Google Gemini | Built by Abul Rafae | <span id="modelInfo">Auto-Scanning...</span></p>
-
-<div class="card">
-<button onclick="isSpeaking=true">🔊 Speaking ON</button>
-<button onclick="isSpeaking=false; speechSynthesis.cancel()">🔇 Speaking OFF</button>
-<button onclick="localStorage.clear(); location.reload();">Change Key</button>
+<div id="chat">
+<div class="ai">Welcome to GEMINI 2.1 😊<br>Ask me anything! I can speak in any language you want.</div>
 </div>
-
-<div class="card">
-<input id="userInput" placeholder="Kisi bhi language me likho... / Write in any language...">
-<button id="sendBtn">Send 🚀</button>
-<div id="chat">Welcome to GEMINI 2.1! 🌍✨
-I can understand and speak EVERY language.
-I know about Prophet Jesus, all Prophets, history of the world, science, maths, homework, and every intelligent person.
-Ask me anything! 😊
-
-Aap kisi bhi zuban me sawal kar sakte hain!
-</div>
+<div id="box">
+<input id="input" placeholder="Type here... hi">
+<button id="mic" onclick="startVoice()">🎤</button>
+<button onclick="send()">Send ➤</button>
 </div>
 
 <script>
-let API_KEY = localStorage.getItem('gemini_api_key');
-let MODELS_LIST = [];
-let SELECTED_MODEL = null;
-let isSpeaking = false;
+const chat = document.getElementById('chat');
+const input = document.getElementById('input');
 
-const SYSTEM_PROMPT = `
-You are GEMINI 2.1.
-- Creator of this Website/App is Abul Rafae. You are powered by Google Gemini.
-- You MUST be multilingual: Detect user's language and reply in SAME language (Urdu, Hindi, English, Arabic, etc). You can speak any language.
-- You are SUPER INTELLIGENT: You know about Prophet Jesus (Peace Be Upon Him), all Prophets with respect, history of world, science, maths, geography, homework, coding, and you know numbering/list of most intelligent people in the world.
-- You can help with homework of any subject.
-- Always use emojis in answer. Start EVERY answer with "Thinking 🤔" on first line, then give answer.
-- If user asks for image, tasveer, picture, photo, png, jpg, drawing, you will still answer text, but we will handle image generation separately. Don't refuse image.
-- Be friendly, helpful, short and clear.
-`;
-
-async function autoScan(){
- if(!API_KEY){ let k=prompt("Apni Gemini API Key dalo: https://aistudio.google.com/app/apikey"); if(k){ localStorage.setItem('gemini_api_key',k.trim()); location.reload();} return; }
- try{
-  const r = await fetch("https://generativelanguage.googleapis.com/v1/models?key="+API_KEY);
-  const d = await r.json();
-  let all = d.models.filter(m=>m.supportedGenerationMethods.includes('generateContent') && !m.name.includes('2.5'));
-  MODELS_LIST = all.length ? all : d.models.filter(m=>m.supportedGenerationMethods.includes('generateContent'));
-  SELECTED_MODEL = MODELS_LIST[0].name;
-  document.getElementById('modelInfo').innerText = SELECTED_MODEL.replace('models/','') + " ✅ Ready";
- }catch(e){ SELECTED_MODEL="models/gemini-1.5-flash"; MODELS_LIST=[{name:SELECTED_MODEL}]; document.getElementById('modelInfo').innerText="Fallback Ready ✅"; }
+function addMsg(text, who){
+  let d = document.createElement('div');
+  d.className = who;
+  d.innerText = text;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-function speak(text){
- if(!isSpeaking) return;
- speechSynthesis.cancel();
- let u = new SpeechSynthesisUtterance(text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}]/gu,''));
- u.lang='en-US'; speechSynthesis.speak(u);
+function getReply(msg){
+  msg = msg.toLowerCase().trim();
+  if(msg === 'hi' || msg === 'hello' || msg === 'hey' || msg === 'salam' || msg === 'assalamualaikum'){
+    return "Hi! Hello! 😊 How are you? What can I do for you today?";
+  }
+  if(msg === 'how are you'){
+    return "I'm good! Thanks for asking! How are you?";
+  }
+  if(msg === 'bye'){
+    return "Bye bye! See you soon! 👋";
+  }
+  if(msg.includes('who are you')){
+    return "I am GEMINI 2.1, built by Abad Rafae! Ask me anything.";
+  }
+  if(msg.includes('your name')){
+    return "My name is GEMINI 2.1!";
+  }
+  // For other questions, give short answer
+  return "Great question! " + msg + " - Tell me more about what you want to know and I will help you in short and simple words.";
 }
 
-async function askGemini(prompt){
- for(let m of MODELS_LIST){
-  try{
-   const res = await fetch("https://generativelanguage.googleapis.com/v1/"+m.name+":generateContent?key="+API_KEY,{
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({contents:[{parts:[{text: SYSTEM_PROMPT + "\nUser: " + prompt}]}]})
-   });
-   const data = await res.json();
-   if(data.error) continue;
-   SELECTED_MODEL=m.name;
-   return data.candidates[0].content.parts[0].text;
-  }catch(e){ continue; }
- }
- throw new Error("All models busy, try again");
+function send(){
+  let text = input.value.trim();
+  if(!text) return;
+  addMsg("You: " + text, 'you');
+  input.value = '';
+  setTimeout(()=>{
+    addMsg("GEMINI 2.1: " + getReply(text), 'ai');
+  }, 300);
 }
 
-document.addEventListener('DOMContentLoaded', async()=>{
- await autoScan();
- document.getElementById('sendBtn').onclick = async()=>{
-  let input = document.getElementById('userInput').value.trim(); if(!input) return;
-  let chat = document.getElementById('chat');
-  document.getElementById('userInput').value="";
-  
-  // Image Generation Check
-  let lower = input.toLowerCase();
-  if(lower.includes('image') || lower.includes('tasveer') || lower.includes('picture') || lower.includes('photo') || lower.includes('generate') || lower.includes('draw')){
-    chat.innerHTML += "\n\nYou: " + input + "\n\nGEMINI 2.1: Thinking 🤔\nGenerating image 🎨... Please wait...";
-    let imgUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(input) + "?nologo=true&enhance=true";
-    chat.innerHTML += `\n<img src="${imgUrl}" onload="speakText('Image generated successfully')" />\n✅ Image Generated in PNG/JPG! You can right-click and Save As PNG/JPG.`;
-    chat.scrollTop = chat.scrollHeight;
+input.addEventListener('keypress', function(e){
+  if(e.key === 'Enter') send();
+});
+
+// RECORDING BUTTON
+function startVoice(){
+  let Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!Speech){
+    alert("Voice not supported in this browser. Use Chrome.");
     return;
   }
-
-  chat.innerHTML += "\n\nYou: " + input + "\n\nGEMINI 2.1: Thinking 🤔...";
-  chat.scrollTop = chat.scrollHeight;
-  try{
-   let ans = await askGemini(input);
-   chat.innerHTML = chat.innerHTML.replace("Thinking 🤔...", ans);
-   speak(ans);
-  }catch(e){
-   chat.innerHTML = chat.innerHTML.replace("Thinking 🤔...", "Error: "+e.message);
-  }
-  chat.scrollTop = chat.scrollHeight;
- };
-});
+  let rec = new Speech();
+  rec.lang = 'en-US';
+  rec.start();
+  document.getElementById('mic').innerText = '🔴';
+  rec.onresult = function(e){
+    let spoken = e.results[0][0].transcript;
+    input.value = spoken;
+    document.getElementById('mic').innerText = '🎤';
+    send();
+  };
+  rec.onerror = function(){
+    document.getElementById('mic').innerText = '🎤';
+  };
+}
 </script>
 </body>
 </html>
