@@ -47,9 +47,8 @@ select{padding:8px;border-radius:20px;border:none;font-weight:bold}
 </div>
 <script>
 // ===== GY AI - UNLIMITED KNOWLEDGE - BY ABDUL RAFAE AHAD =====
-// YE WALA CODE LIVE AI SE JUDA HUA HAI - ISKO SAB KUCH PATA HAI JO MUJHE PATA HAI
 let capabilities = ["text","image","video","voice","scan","all_languages","unlimited_knowledge"];
-let system_prompt = "You are GY AI. RULE: User ka text jaisa hai waisa hi parho, sahi tarah parho. Emoji ko describe mat karo. Emoji ko emoji hi samjho. 1 line bole to 1 line, 10 line bole to 10 line. Creator: abdul rafae ahad. Admins: Hamdan and Ayan.";
+let system_prompt = "You are GY AI. RULE: Hamesha ROMAN URDU me jawab do. Emoji ko describe mat karo.";
 let synth = window.speechSynthesis;
 function stopVoice(){ synth.cancel(); }
 function speakText(t){ synth.cancel(); let u=new SpeechSynthesisUtterance(t.replace(/[😂❤️😎👍🔥🎥🖼️🎤🕌📖🦕]/g,'')); let vs=synth.getVoices(); let v=document.getElementById('voiceSelect').value; if(v==="female"){ let f=vs.find(x=>x.name.includes('Zira')||x.name.includes('Samantha')); if(f) u.voice=f; u.pitch=1.2; } else { let m=vs.find(x=>x.name.includes('David')||x.name.includes('Daniel')); if(m) u.voice=m; u.pitch=0.8; } synth.speak(u); }
@@ -61,14 +60,14 @@ function toggleEmoji(){ let p=document.getElementById('emojiPanel'); p.style.dis
 function startVoice(){ if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){ alert('Chrome me kholo bhai!'); return; } let Rec=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=new Rec(); rec.lang='ur-PK'; document.getElementById('voiceBtn').innerText='🎤 Sun Raha Hun...'; rec.onresult=function(e){ document.getElementById('inp').value=e.results[0][0].transcript; document.getElementById('voiceBtn').innerText='🎤 Voice Bhejo'; sendAI(); }; rec.start(); }
 function autoScan(input){ let f=input.files[0]; let c=document.getElementById('chat'); if(!f){ c.innerHTML+=`<div class="msg">Bhai file nahi mili!</div>`; return; } c.innerHTML+=`<div class="msg">📂 Auto Scan Ho Gaya! ✅<br>File: <b>${f.name}</b><br>Size: ${(f.size/1024).toFixed(1)} KB<br>Ye 10% scan complete hai!</div>`; c.scrollTop=c.scrollHeight; }
 
-// ===== YEHI WALI LINE SAB KUCH KARAYEGI - LIVE AI =====
+// ===== YEHI WALI LINE CHANGE KI HAI - SIRF ROMAN URDU =====
 async function askLiveAI(question, lineCount){
 let lang = document.getElementById('langSelect').value;
 let lineRule = "";
 if(lineCount===1) lineRule = " Sirf 1 line me jawab do.";
 if(lineCount===10) lineRule = " 10 line me jawab do.";
 if(lineCount===5) lineRule = " 5 line me jawab do.";
-let fullPrompt = `Tum GY AI ho, created by Abdul Rafae Ahad. User ka text jaisa hai waisa hi parho, emoji ko describe mat karo. User ne pucha: ${question}. ${lineRule} Roman Urdu me jawab do, simple aur sahi tarah. Agar explain bola hai to full explanation do. Tumhe sab kuch pata hai - Prophet, Islam, Quran, Science, Dinosaur, har cheez.`;
+let fullPrompt = `Tum GY AI ho, created by Abdul Rafae Ahad. RULE: Hamesha ROMAN URDU me jawab do. Matlab English letters me Urdu bolo, jaise "Haan bhai, kya haal hai, sab theek hai". Kabhi bhi Urdu script me mat likho, kabhi formal kitaabi Urdu me mat bolo. Bilkul dost jaisa bolo, jaise "bhai, yaar, chal, ho gaya". User ka text jaisa hai waisa hi parho, emoji ko describe mat karo. User ne pucha: ${question}. ${lineRule} Agar user "talk in english" bole to English me bolo, warna hamesha Roman Urdu me bolo. Tumhe sab kuch pata hai - Prophet, Islam, Quran, Science, Dinosaur, har cheez.`;
 try{
 let res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}`);
 let ans = await res.text();
