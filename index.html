@@ -14,6 +14,35 @@ body{background:#0a0a0a;color:#fff;display:flex;justify-content:center;padding:1
 .msg.me{background:#1e3a8a;text-align:right}
 .msg img{width:100%;border-radius:10px;margin-top:8px}
 .msg video{width:100%;border-radius:10px;margin-top:8px}
+/* ===== THINKING EFFECT - BILKUL META AI JAISA - BLUR + SHIMMER ===== */
+.thinking{
+background:#1a1a1a !important;
+filter: blur(0px);
+position:relative;
+overflow:hidden;
+}
+.thinking .blur-line{
+height:12px;background:#333;border-radius:10px;margin:8px 0;
+filter: blur(4px);
+animation: shimmer 1.2s infinite;
+}
+.thinking .blur-line:nth-child(2){width:80%}
+.thinking .blur-line:nth-child(3){width:60%}
+@keyframes shimmer{
+0%{opacity:0.3}
+50%{opacity:1}
+100%{opacity:0.3}
+}
+.dots span{
+display:inline-block;width:8px;height:8px;background:#00c853;border-radius:50%;margin:0 2px;
+animation: bounce 1s infinite;
+}
+.dots span:nth-child(2){animation-delay:0.2s}
+.dots span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{
+0%,100%{transform:translateY(0);opacity:0.4}
+50%{transform:translateY(-6px);opacity:1}
+}
 #controls{display:flex;gap:5px;padding:8px;background:#1a1a1a;flex-wrap:wrap;justify-content:center}
 #controls button{padding:8px 12px;border:none;border-radius:20px;cursor:pointer;font-weight:bold;font-size:13px}
 #voiceBtn{background:#ff5722;color:#fff}
@@ -32,22 +61,22 @@ select{padding:8px;border-radius:20px;border:none;font-weight:bold}
 <body>
 <div id="box">
 <div id="header">🤖 GY AI - Unlimited Knowledge<small>Owner: Abdul Rafae Ahad | Admins: Ayan and Hamdan | Live AI Connected</small></div>
-<div id="chat"><div class="msg">Hi, how can I help you? 😎<br><br>Ask me anything - Prophet, Islam, Science, Dinosaur, PSM School, anything!<br><br>🖼️ Picture + 🎥 Video bhi bana sakta hun!</div></div>
+<div id="chat"><div class="msg">Hi, how can I help you? 😎<br><br>Ask me anything - Prophet, Islam, Science, Dinosaur, Black Hole, White Hole, anything!<br><br>🖼️ Picture + 🎥 Video also available!</div></div>
 <div id="controls">
-<button id="voiceBtn" onclick="startVoice()">🎤 Voice Bhejo</button>
+<button id="voiceBtn" onclick="startVoice()">🎤 Voice</button>
 <button id="emojiBtn" onclick="toggleEmoji()">😂 Emoji 500+</button>
 <button id="scanBtn" onclick="document.getElementById('fileScan').click()">📂 Auto Scan</button>
 <button id="stopBtn" onclick="stopVoice()">⏹️ Stop Voice</button>
 <select id="voiceSelect"><option value="female">👩 Female</option><option value="male">👨 Male</option></select>
-<select id="langSelect"><option value="en">English</option><option value="ur">Roman Urdu</option><option value="ar">Arabic</option></select>
+<select id="langSelect"><option value="en">English</option></select>
 </div>
 <div id="emojiPanel"></div>
 <input type="file" id="fileScan" style="display:none" onchange="autoScan(this)">
 <div id="row"><input id="inp" placeholder="Hi, how can I help you? 😎"><button id="send" onclick="sendAI()">SEND</button></div>
-<div id="hint">Owner: Abdul Rafae Ahad | Admins: Ayan and Hamdan | 1 line = 1 line | 10 line = 10 line</div>
+<div id="hint">Owner: Abdul Rafae Ahad | Admins: Ayan and Hamdan | 100% English Mode</div>
 </div>
 <script>
-// ===== GY AI - BY ABDUL RAFAE AHAD - ENGLISH FIRST VERSION =====
+// ===== GY AI - BY ABDUL RAFAE AHAD - 100% ENGLISH VERSION =====
 let synth = window.speechSynthesis;
 function stopVoice(){ synth.cancel(); }
 function speakText(t){ synth.cancel(); let u=new SpeechSynthesisUtterance(t.replace(/[😂❤️😎👍🔥🎥🖼️🎤🕌📖🦕⚡🧠]/g,'')); let vs=synth.getVoices(); let v=document.getElementById('voiceSelect').value; if(v==="female"){ let f=vs.find(x=>x.name.includes('Zira')||x.name.includes('Samantha')); if(f) u.voice=f; u.pitch=1.2; } else { let m=vs.find(x=>x.name.includes('David')||x.name.includes('Daniel')); if(m) u.voice=m; u.pitch=0.8; } synth.speak(u); }
@@ -56,39 +85,27 @@ function speakText(t){ synth.cancel(); let u=new SpeechSynthesisUtterance(t.repl
 let emojis="😀😃😄😁😆😅😂🤣😊😇🙂🙃😉😌😍🥰😘😗😙😚😋😛😝😜🤪🤨🧐🤓😎🤩🥳😏😒😞😔😟😕🙁☹️😣😖😫😩🥺😢😭😤😡😠🤬🤯😳🥵🥶😱😨😰😥😓🤗🤔🤭🤫🤥😶😐😑😬🙄😯😦😧😮😲🥱😴🤤😪😵🤐🥴🤢🤮🤧😷🤒🤕🤑🤠😈👿👹👺🤡💩👻💀☠️👽👾🤖🎃😺😸😹😻😼😽🙀😿😾🙈🙉🙊💋💌💘💝💖💗💓💞💕💟❣️💔❤️🧡💛💚💙💜🖤🤍🤎💯💢💥💫💦💨🕳️💬💭💤👋🤚🖐️✋🖖👌🤌🤏✌️🤞🤟🤘🤙👈👉👆🖕👇☝️👍👎✊👊🤛🤜👏🙌👐🤲🤝🙏✍️💅🤳💪🦾🦿🦵🦶👂🦻👃🧠🦷🦴👀👁️👅👄🩸👶👧🧒👦👩🧑👨👩‍🦱👨‍🦱👩‍🦰👨‍🦰👱‍♀️👱‍♂️👩‍🦳👨‍🦳👩‍🦲👨‍🦲🧔👵🧓👴👲👳‍♀️👳‍♂️🧕👮‍♀️👮‍♂️👷‍♀️👷‍♂️💂‍♀️💂‍♂️🕵️‍♀️🕵️‍♂️👩‍⚕️👨‍⚕️👩‍🌾👨‍🌾👩‍🍳👨‍🍳👩‍🎓👨‍🎓👩‍🎤👨‍🎤👩‍🏫👨‍🏫👩‍🏭👨‍🏭👩‍💻👨‍💻👩‍💼👨‍💼👩‍🔧👨‍🔧👩‍🔬👨‍🔬👩‍🎨👨‍🎨👩‍🚒👨‍🚒👩‍✈️👨‍✈️👩‍🚀👨‍🚀👩‍⚖️👨‍⚖️👰‍♀️👰‍♂️🤵‍♀️🤵‍♂️👸🤴🥷🦸‍♀️🦸‍♂️🦹‍♀️🦹‍♂️🤶🎅🧙‍♀️🧙‍♂️🧝‍♀️🧝‍♂️🧛‍♀️🧛‍♂️🧟‍♀️🧟‍♂️🧞‍♀️🧞‍♂️🧜‍♀️🧜‍♂️🧚‍♀️🧚‍♂️👼🤰🤱🙇‍♀️🙇‍♂️💁‍♀️💁‍♂️🙅‍♀️🙅‍♂️🙆‍♀️🙆‍♂️🙋‍♀️🙋‍♂️🧏‍♀️🧏‍♂️🤦‍♀️🤦‍♂️🤷‍♀️🤷‍♂️🙎‍♀️🙎‍♂️🙍‍♀️🙍‍♂️💇‍♀️💇‍♂️💆‍♀️💆‍♂️🧖‍♀️🧖‍♂️💃🕺👯‍♀️👯‍♂️🧎‍♀️🧎‍♂️🧍‍♀️🧍‍♂️🚶‍♀️🚶‍♂️🏃‍♀️🏃‍♂️👫👭👬💑👩‍❤️‍👨👩‍❤️‍👩👨‍❤️‍👨💏👪👨‍👩‍👦👨‍👩‍👧👨‍👩‍👧‍👦👨‍👩‍👦‍👦👨‍👩‍👧‍👧👨‍👦👨‍👦‍👦👨‍👧👨‍👧‍👦👨‍👧‍👧👩‍👦👩‍👦‍👦👩‍👧👩‍👧‍👦👩‍👧‍👧🐶🐱🐭🐹🐰🦊🦝🐻🐼🦥🦦🦨🦘🦡🐾🦃🐔🐣🐤🐥🐦🐧🕊️🦅🦆🦢🦉🦤🪶🦩🦚🦜🐸🐊🐢🦎🐍🐲🐉🦕🦖🐳🐋🐬🦭🐟🐠🐡🦈🐙🐚🍏🍎🍐🍊🍋🍌🍉🍇🍓🫐🍈🍒🍑🥭🍍🥥🥝🍅🍆🥑🥦🥬🥒🌶️🫑🌽🥕🫒🧄🧅🥔🍠🥐🥯🍞🥖🥨🧀🥚🍳🧈🥞🧇🧆🥓🥩🍗🍖🦴🌭🍔🍟🍕🫓🥪🥙🌮🌯🫔🥗🥘🫕🥫🍝🍜🍲🍛🍣🍱🥟🦪🍤🍙🍚🍘🍥🥠🥮🍢🍡🍧🍨🍦🥧🧁🍰🎂🍮🍭🍬🍫🍿🍩🍪🌰🥜🍯🥛🍼🫖☕🍵🧃🥤🧋🍶🍺🍻🥂🍷🥃🍸🍹🧉🍾🧊🥄🍴🍽️🥢🥡🧂🕌🕋⛪🛕🕍🕎✡️☦️☪️🕉️☸️🔯🛐⛎♈♉♊♋♌♍♎♏♐♑♒♓🔱⚜️🕋🕌📖🦕🦖⚡🧠";
 let ep=document.getElementById('emojiPanel'); emojis.split('').forEach(e=>{ if(e.trim()){ let s=document.createElement('span'); s.innerText=e; s.onclick=()=>{document.getElementById('inp').value+=e;}; ep.appendChild(s);} });
 function toggleEmoji(){ let p=document.getElementById('emojiPanel'); p.style.display=p.style.display==='block'?'none':'block'; }
-function startVoice(){ if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){ alert('Open in Chrome bro!'); return; } let Rec=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=new Rec(); rec.lang='en-US'; document.getElementById('voiceBtn').innerText='🎤 Listening...'; rec.onresult=function(e){ document.getElementById('inp').value=e.results[0][0].transcript; document.getElementById('voiceBtn').innerText='🎤 Voice Bhejo'; sendAI(); }; rec.start(); }
+function startVoice(){ if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){ alert('Open in Chrome bro!'); return; } let Rec=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=new Rec(); rec.lang='en-US'; document.getElementById('voiceBtn').innerText='🎤 Listening...'; rec.onresult=function(e){ document.getElementById('inp').value=e.results[0][0].transcript; document.getElementById('voiceBtn').innerText='🎤 Voice'; sendAI(); }; rec.start(); }
 function autoScan(input){ let f=input.files[0]; let c=document.getElementById('chat'); if(!f){ c.innerHTML+=`<div class="msg">No file found bro!</div>`; return; } c.innerHTML+=`<div class="msg">📂 Auto Scan Done! ✅<br>File: <b>${f.name}</b><br>Size: ${(f.size/1024).toFixed(1)} KB<br>This is 10% scan complete!</div>`; c.scrollTop=c.scrollHeight; }
 
-// ===== FIX: ENGLISH FIRST - JAB TAK USER URDU NA BOLE, AI BHI URDU NAHI BOLEGA =====
-function isRomanUrdu(text){
-let l = text.toLowerCase();
-// Agar in me se koi lafz aaya to matlab user ne Roman Urdu boli hai
-let urduWords = ["bhai","kya","kaise","kaisa","kab","kyun","kyu","kidhar","kahan","batao","bata","kar","karo","chahiye","hai","hain","ho","tha","thi","salam","walaikum","allah","prophet","quran","namaz","roza","acha","theek","yaar","zaroor","matlab","mera","tera","usko","isko","mujhe","tujhe","bolo","bol","suno","dekho","aaj","kal","abhi","kabhi","kyunki","lekin","aur","ya","ka","ki","ke","ko","me","se","pe","tak","liye","bhi","nahi","han","haan","sahi","galat","pata","samajh","karo","kya haal"];
-for(let w of urduWords){ if(l.includes(" "+w+" ") || l.startsWith(w+" ") || l.endsWith(" "+w) || l===w) return true; }
-if(/[\u0600-\u06FF]/.test(text)) return true;
-return false;
-}
-
-async function askLiveAI(question, lineCount, userIsUrdu){
+// ===== 100% ENGLISH ONLY - NO URDU, NO ROMAN URDU =====
+async function askLiveAI(question, lineCount){
 let lineRule = "";
 if(lineCount===1) lineRule = " Only 1 line answer.";
 if(lineCount===10) lineRule = " Answer in 10 lines.";
 if(lineCount===5) lineRule = " Answer in 5 lines.";
-let fullPrompt = "";
-if(userIsUrdu){
-// User ne Roman Urdu boli hai, tab hi Roman Urdu me jawab do
-fullPrompt = `IMPORTANT: User is speaking Roman Urdu. Reply ONLY in Roman Urdu. Roman Urdu means Urdu in English letters like "Haan bhai, kya haal hai". NEVER use Urdu script, NEVER use formal words like "Ji bilkul, aapke". Talk like a friend: "Haan bhai, yaar, chal, ho gaya". You are GY AI, Owner is Abdul Rafae Ahad, Admins are Ayan and Hamdan. User asked: ${question}. ${lineRule}`;
-} else {
-// User ne Urdu nahi boli, to SIRF ENGLISH me jawab do, Urdu bilkul mat bolo
-fullPrompt = `IMPORTANT: User is speaking English. Reply ONLY in English. NEVER reply in Urdu, NEVER use Urdu script, NEVER use Roman Urdu. Talk friendly in English like "Hey bro, sure!". You are GY AI, Owner is Abdul Rafae Ahad, Admins are Ayan and Hamdan. User asked: ${question}. ${lineRule} If user says "Hi" or "Hello", just reply "Hi, how can I help you?"`;
-}
+let fullPrompt = `STRICT RULE: Reply ONLY in English. NEVER reply in Urdu, NEVER in Roman Urdu, NEVER use Urdu script, NEVER use words like "bhai, yaar, haan". Always speak perfect English like "Hey bro, sure!". You are GY AI, Owner is Abdul Rafae Ahad, Admins are Ayan and Hamdan. User asked: ${question}. ${lineRule} If user says "Hi" or "Hello", just reply "Hi, how can I help you?"`;
 try{
 let res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}`);
 let ans = await res.text();
+// Agar phir bhi Urdu aa jaye to dobara English me mangwao
+if(/[\u0600-\u06FF]/.test(ans) || ans.toLowerCase().includes('bhai') || ans.toLowerCase().includes('yaar')){
+let res2 = await fetch(`https://text.pollinations.ai/${encodeURIComponent("Rewrite this in perfect English only, no Urdu, no Roman Urdu: " + ans)}`);
+ans = await res2.text();
+}
 return ans;
 } catch(e){
-if(userIsUrdu) return "Bhai internet slow hai, phir se pucho! 😔";
-else return "Internet is slow bro, please ask again! 😔";
+return "Internet is slow bro, please ask again!";
 }
 }
 
@@ -97,42 +114,36 @@ let inp=document.getElementById('inp'); let txt=inp.value.trim(); if(!txt) retur
 let chat=document.getElementById('chat');
 chat.innerHTML+=`<div class="msg me">${txt}</div>`; inp.value='';
 let low=txt.toLowerCase();
-let userIsUrdu = isRomanUrdu(txt);
 
 // ===== OWNER =====
-if(low.includes('owner') || low.includes('who created') || low.includes('kisne banaya') || low.includes('creator') || low.includes('banaya') || low.includes('who made') || low.includes('tumhe kisne') || low.includes('malik')){
+if(low.includes('owner') || low.includes('who created') || low.includes('creator') || low.includes('who made') || low.includes('malik')){
 let r="Abdul Rafae Ahad"; chat.innerHTML+=`<div class="msg">${r}</div>`; speakText(r); chat.scrollTop=chat.scrollHeight; return;
 }
 // ===== ADMIN - AYAN AND HAMDAN =====
 if(low.includes('admin') || low.includes('admis') || low.includes('edmin')){
 let r="Ayan and Hamdan"; chat.innerHTML+=`<div class="msg">${r}</div>`; speakText(r); chat.scrollTop=chat.scrollHeight; return;
 }
-// ===== HI / HELLO - SIRF ENGLISH =====
-if(low==="hi" || low==="hello" || low==="hey" || low==="hii" || low==="heyy"){
+// ===== HI / HELLO =====
+if(low==="hi" || low==="hello" || low==="hey" || low==="hii" || low==="heyy" || low==="salam" || low.includes('assalam')){
 let r="Hi, how can I help you? 😎"; chat.innerHTML+=`<div class="msg">${r}</div>`; speakText(r); chat.scrollTop=chat.scrollHeight; return;
 }
-// ===== SALAM - AGAR URDU ME SALAM BOLA TO ROMAN URDU ME JAWAB =====
-if(low.includes('salam') || low.includes('assalam')){
-let r="Walaikum Salam bhai! Kya haal hai? 😎 Bata kya chahiye?"; chat.innerHTML+=`<div class="msg">${r}</div>`; speakText(r); chat.scrollTop=chat.scrollHeight; return;
-}
 // ===== PICTURE =====
-if(low.includes('picture') || low.includes('tasveer') || low.includes('photo') || low.includes('image') || low.includes('pic') || low.includes('drawing') || low.includes('poster') || low.includes('dp banao') || low.includes('sketch') || low.includes('thumbnail')){
+if(low.includes('picture') || low.includes('photo') || low.includes('image') || low.includes('pic') || low.includes('drawing') || low.includes('poster') || low.includes('sketch') || low.includes('thumbnail')){
 let p=encodeURIComponent(txt); let u=`https://image.pollinations.ai/prompt/${p}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random()*9999)}`;
-let msgText = userIsUrdu ? "Ho gaya bhai! 🖼️ Ye rahi teri picture, dekh le! 😎" : "Done bro! 🖼️ Here is your picture! 😎";
-chat.innerHTML+=`<div class="msg">${msgText}<br><img src="${u}"><br><br>${userIsUrdu ? 'Aur chahiye to bol "dobara banao"!' : 'Want more? Just say "make again"!'}</div>`; speakText(msgText); chat.scrollTop=chat.scrollHeight; return;
+chat.innerHTML+=`<div class="msg">Done bro! 🖼️ Here is your picture! 😎<br><img src="${u}"><br><br>Want more? Just say "make again"!</div>`; speakText("Done bro, your picture is ready"); chat.scrollTop=chat.scrollHeight; return;
 }
 // ===== VIDEO =====
-if(low.includes('video') || low.includes('reel') || low.includes('clip') || low.includes('movie') || low.includes('short video')){
-let msgText = userIsUrdu ? "Ho gaya bhai! 🎥 Tera video ready hai! 😎" : "Done bro! 🎥 Your video is ready! 😎";
-chat.innerHTML+=`<div class="msg">${msgText}<br><br>Topic: "${txt}"<br><video controls autoplay muted loop style="margin-top:8px"><source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4"></video><br><a href="https://pika.art" target="_blank" style="color:#00e676">▶️ GENERATE FULL VIDEO - CLICK HERE</a></div>`; speakText(msgText); chat.scrollTop=chat.scrollHeight; return;
+if(low.includes('video') || low.includes('reel') || low.includes('clip') || low.includes('movie')){
+chat.innerHTML+=`<div class="msg">Done bro! 🎥 Your video is ready! 😎<br><br>Topic: "${txt}"<br><video controls autoplay muted loop style="margin-top:8px"><source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4"></video><br><a href="https://pika.art" target="_blank" style="color:#00e676">▶️ GENERATE FULL VIDEO - CLICK HERE</a></div>`; speakText("Your video is ready bro"); chat.scrollTop=chat.scrollHeight; return;
 }
 
 let lineCount=0; if(low.includes('10 line')) lineCount=10; if(low.includes('5 line')) lineCount=5; if(low.includes('1 line')) lineCount=1;
-// ===== THINKING ⚡🧠 - ENGLISH ME =====
+// ===== THINKING EFFECT - BILKUL META AI JAISA - BLUR + DOTS =====
 let loadId = "load"+Date.now();
-chat.innerHTML+=`<div class="msg" id="${loadId}">Thinking... ⚡🧠</div>`; chat.scrollTop=chat.scrollHeight;
-let ans = await askLiveAI(txt, lineCount, userIsUrdu);
-let el=document.getElementById(loadId); if(el) el.innerHTML = ans;
+chat.innerHTML+=`<div class="msg thinking" id="${loadId}"><div class="dots"><span></span><span></span><span></span></div> Thinking... ⚡🧠<div class="blur-line"></div><div class="blur-line"></div><div class="blur-line"></div></div>`; chat.scrollTop=chat.scrollHeight;
+let ans = await askLiveAI(txt, lineCount);
+// ===== JAB JAWAB AAYE TO BLUR HAT JAYE - OK HOGAYA JAISA =====
+let el=document.getElementById(loadId); if(el){ el.classList.remove('thinking'); el.innerHTML = ans; }
 speakText(ans); chat.scrollTop=chat.scrollHeight;
 }
 document.getElementById('inp').addEventListener('keydown',function(e){ if(e.key==='Enter') sendAI(); });
